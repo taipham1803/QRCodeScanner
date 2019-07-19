@@ -1,0 +1,16 @@
+PODS:
+  - Gallery (2.2.0)
+
+DEPENDENCIES:
+  - Gallery
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Gallery
+
+SPEC CHECKSUMS:
+  Gallery: 3f4c780c4b22906d6b0a5e55d12167cdc4b4fc5b
+
+PODFILE CHECKSUM: 9a2931cafbc24bed4cd0a20a2b8912210890b7d9
+
+COCOAPODS: 1.7.3
