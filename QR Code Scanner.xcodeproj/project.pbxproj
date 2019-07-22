@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6BAE957DE44805C80118502E /* Pods_QR_Code_Scanner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA0C01369375ED0DFB4E0022 /* Pods_QR_Code_Scanner.framework */; };
+		C72D5E9922E2C888005109E3 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C72D5E9822E2C888005109E3 /* HistoryViewController.swift */; };
 		C7A6CCED22E0145600B9A9DD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A6CCEC22E0145600B9A9DD /* AppDelegate.swift */; };
 		C7A6CCEF22E0145600B9A9DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A6CCEE22E0145600B9A9DD /* ViewController.swift */; };
 		C7A6CCF222E0145600B9A9DD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7A6CCF022E0145600B9A9DD /* Main.storyboard */; };
@@ -22,6 +23,7 @@
 /* Begin PBXFileReference section */
 		3572174D67B5CFD954F0B010 /* Pods-QR Code Scanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QR Code Scanner.release.xcconfig"; path = "Target Support Files/Pods-QR Code Scanner/Pods-QR Code Scanner.release.xcconfig"; sourceTree = "<group>"; };
 		4023F7BC303BF57C24EAE52D /* Pods-QR Code Scanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QR Code Scanner.debug.xcconfig"; path = "Target Support Files/Pods-QR Code Scanner/Pods-QR Code Scanner.debug.xcconfig"; sourceTree = "<group>"; };
+		C72D5E9822E2C888005109E3 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
 		C7A6CCE922E0145600B9A9DD /* QR Code Scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "QR Code Scanner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7A6CCEC22E0145600B9A9DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C7A6CCEE22E0145600B9A9DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -65,6 +67,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C72D5E9722E2C85F005109E3 /* HistoryView */ = {
+			isa = PBXGroup;
+			children = (
+				C72D5E9822E2C888005109E3 /* HistoryViewController.swift */,
+			);
+			path = HistoryView;
+			sourceTree = "<group>";
+		};
 		C7A6CCE022E0145600B9A9DD = {
 			isa = PBXGroup;
 			children = (
@@ -98,6 +108,7 @@
 		C7AD111822E16BBC00DB58FD /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				C72D5E9722E2C85F005109E3 /* HistoryView */,
 				C7AD112122E1C2E600DB58FD /* ContentCodeView */,
 				C7AD111B22E1709400DB58FD /* GenerateCodeView */,
 				C7AD111A22E1708D00DB58FD /* ScanCodeView */,
@@ -268,6 +279,7 @@
 				C7A6CCEF22E0145600B9A9DD /* ViewController.swift in Sources */,
 				C7AD111D22E170A800DB58FD /* ScanCodeViewController.swift in Sources */,
 				C7AD112322E1C2F800DB58FD /* ContentViewController.swift in Sources */,
+				C72D5E9922E2C888005109E3 /* HistoryViewController.swift in Sources */,
 				C7A6CCED22E0145600B9A9DD /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,104 +8,226 @@
 
 import UIKit
 import AVFoundation
-import Gallery
 
-class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, GalleryControllerDelegate {
+class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
+    @IBOutlet weak var imgViewGallery: UIImageView!
     @IBOutlet weak var videoPreview: UIView!
-    
-    @IBAction func btnScanFromCamera(_ sender: Any) {
-//        self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
-        present(gallery, animated: true, completion: nil)
-    }
+    @IBOutlet weak var lblContentImage: UILabel!
+    @IBOutlet weak var btnOpen: UIButton!
     
     var stringContent:String = "default"
-    var gallery = GalleryController()
-    
-    @IBAction func btnScanStaticImage(_ sender: Any) {
-        self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
-        if let features = self.detectQRCode(UIImage(named: "qrcode")), !features.isEmpty{
-            for case let row as CIQRCodeFeature in features{
-                print(row.messageString ?? "nope")
-                stringContent = row.messageString ?? "Can not scan this code!"
-                
-            }
-        }
-        
-        self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
-        print("Press button get image from library")
-    }
-    
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var imgView: UIImageView = UIImageView()
+    var imagePicker: UIImagePickerController!
+    
+    @IBAction func btnAgain(_ sender: Any) {
+        lblContentImage.text = ""
+        captureSession.stopRunning()
+        captureSession.startRunning()
+    }
+    
+    @IBAction func btnOpenContent(_ sender: Any) {
+        print("Press button btnOpenContent")
+        if(stringContent != "default"){
+            self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
+        }
+    }
+    
+    @IBAction func btnFromLibrary(_ sender: UIButton) {
+        self.openGallary()
+
+        print("Press button btnFromLibrary")
+//        btnFromLibrary.setTitleColor(UIColor.white, for: .normal)
+//        btnFromLibrary.isUserInteractionEnabled = true
+        
+//        let alert = UIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
+//        alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
+//            self.openCamera()
+//        }))
+        
+//        alert.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
+//            self.openGallary()
+//        }))
+
+//        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        /*If you want work actionsheet on ipad
+         then you have to use popoverPresentationController to present the actionsheet,
+         otherwise app will crash on iPad */
+//        switch UIDevice.current.userInterfaceIdiom {
+//        case .pad:
+//            alert.popoverPresentationController?.sourceView = sender
+//            alert.popoverPresentationController?.sourceRect = sender.bounds
+//            alert.popoverPresentationController?.permittedArrowDirections = .up
+//        default:
+//            break
+//        }
+//
+//        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    
+    @IBAction func btnHistoryScan(_ sender: Any) {
+        self.performSegue(withIdentifier: "segueScanToHistory", sender: 1)
+//        if let features = self.detectQRCode(UIImage(named: "qrcode")), !features.isEmpty{
+//            for case let row as CIQRCodeFeature in features{
+//                print(row.messageString ?? "nope")
+//                stringContent = row.messageString ?? "Can not scan this code!"
+//            }
+//        }
+        print("Press button btnHistoryScan")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        gallery.delegate = self
-        
-//        Gallery.Config.Camera.recordLocation = true
-        Gallery.Config.tabsToShow = [.imageTab]
-//        Config.initialTab.
-
-        view.backgroundColor = UIColor.gray
+        view.backgroundColor = UIColor.white
         captureSession = AVCaptureSession()
+        imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        autoCapture()
+//        let content = "Good morning, 627137152 \n Good morning, +34627217154 \n Good morning, 627 11 71 54"
+//        let contentPhone = "tel:+84869898203"
+//        if(checkContainPhoneNo(content: contentPhone)){
+//            print("This string contain phone number")
+//        } else {
+//            print("This string have no phone number")
+//        }
 
+    }
+    
+    func autoCapture(){
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else { return }
         let videoInput: AVCaptureDeviceInput
-
+        
         do {
             videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
         } catch {
             return
         }
-
+        
         if (captureSession.canAddInput(videoInput)) {
             captureSession.addInput(videoInput)
         } else {
             failed()
             return
         }
-
+        
         let metadataOutput = AVCaptureMetadataOutput()
-
+        
         if (captureSession.canAddOutput(metadataOutput)) {
             captureSession.addOutput(metadataOutput)
-
+            
             metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metadataOutput.metadataObjectTypes = [.qr]
         } else {
             failed()
             return
         }
-
+        
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-//        previewLayer.frame = view.layer.bounds
-        previewLayer.frame = CGRect(x: 0.0, y: 0.0, width: 100.0, height: 100.0)
+        previewLayer.frame = CGRect(x: 0.0, y: 0.0, width: 400.0, height: 550)
         previewLayer.backgroundColor = UIColor.red.cgColor
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
-
+//        videoPreview.layer.addSublayer(previewLayer)
         captureSession.startRunning()
     }
     
-    
-    func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
-        controller.dismiss(animated: true, completion: nil)
-        gallery = GalleryController()
+    func checkContentFromCode(content: String){
+        print("Check content: ", content)
+        let mailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let urlRegEx = "^(https?://)?(www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6}(/[-\\w@\\+\\.~#\\?&/=%]*)?$"
+        let youtubeRegex = "(http(s)?:\\/\\/)?(www\\.|m\\.)?youtu(be\\.com|\\.be)(\\/watch\\?([&=a-z]{0,})(v=[\\d\\w]{1,}).+|\\/[\\d\\w]{1,})"
+        
+        let facebookRegEx = "(http(s)?:\\/\\/)?(www\\.|m\\.)?f(acebook\\.com|b\\.com)"
+
+//        print("Check isValidEmail: ",isValidEmail(emailStr: content))
+        if(extractPhoneNumber(content: content).count>1){
+            print("This is a phone number")
+            btnOpen.setTitle("Call this number",for: .normal)
+        } else if(matchesEmail(for: mailRegEx, in: content).count>0){
+            print("This is a email")
+            btnOpen.setTitle("Send a email",for: .normal)
+        } else if(matchesEmail(for: youtubeRegex, in: content).count>0){
+            print("This is a url youtube")
+            btnOpen.setTitle("Open in youtube",for: .normal)
+        } else if(matchesEmail(for: facebookRegEx, in: content).count>0){
+            print("This is a url facebook")
+            btnOpen.setTitle("Open in Facebook",for: .normal)
+        } else if(matchesEmail(for: urlRegEx, in: content).count>0){
+            print("This is a url")
+            btnOpen.setTitle("Open this url",for: .normal)
+        } else {
+            print("This is another case!")
+        }
+        
+        print("Check matchesEmail: ", matchesEmail(for: urlRegEx, in: content))
     }
     
-    func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
+    func extractPhoneNumber(content: String) -> String {
+        let tempphone = content.components(separatedBy: CharacterSet.decimalDigits.inverted).joined(separator: "")
+        if(tempphone.count>4 && tempphone.count < 15){
+            print(tempphone)
+            return tempphone
+        } else {
+            return ""
+        }
+    }
+    
+    func matchesEmail(for regex: String, in text: String) -> [String] {
+        do {
+            let regex = try NSRegularExpression(pattern: regex)
+            let nsString = text as NSString
+            let results = regex.matches(in: text, range: NSRange(location: 0, length: nsString.length))
+            print("\(results)")
+            return results.map { nsString.substring(with: $0.range)}
+        } catch let error {
+            print("invalid regex: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    func isValidEmail(emailStr:String) -> Bool {
+        let emailRegEx = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailPred.evaluate(with: emailStr)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        print("Run on imagePickerController")
+        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
+        imgViewGallery.image = image
+        
+        if let features = self.detectQRCode(image), !features.isEmpty{
+            for case let row as CIQRCodeFeature in features{
+                print(row.messageString ?? "nope")
+                lblContentImage.text = row.messageString ?? "nope"
+                stringContent = row.messageString ?? "Can not scan this code!"
+            }
+        }
+        checkContentFromCode(content: stringContent)
+        
+        picker.dismiss(animated: true, completion: nil)
+//        picker.dismiss(animated: true) {
+//            self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
+//        }
         
     }
     
-    func galleryController(_ controller: GalleryController, requestLightbox images: [Image]) {
-        
-    }
     
-    func galleryControllerDidCancel(_ controller: GalleryController) {
-        controller.dismiss(animated: true, completion: nil)
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated:  true, completion: nil)
+    }
+
+    
+    func openGallary(){
+        imagePicker.sourceType = UIImagePickerControllerSourceType.photoLibrary
+        imagePicker.allowsEditing = true
+        self.present(imagePicker, animated: true, completion: nil)
     }
     
     
@@ -122,7 +244,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
             }
             let features = qrDetector?.features(in: ciImage, options: options)
             return features
-
         }
         return nil
     }
@@ -166,6 +287,10 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
     func found(code: String) {
         print(code)
+        stringContent = code
+        lblContentImage.text = code 
+        
+//        self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -183,13 +308,20 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
         case "segueScanToContent":
+//            print(segue.destination)
+            if let vc = segue.destination as? UINavigationController {
+                if let vcRoot = vc.viewControllers.first as? ContentViewController {
+                    vcRoot.title = stringContent
+                    vcRoot.stringUrl = stringContent
+                }
+            }
+        case "segueScanToHistory":
             print(segue.destination)
-            if let vc = segue.destination as? ContentViewController {
-                vc.title = stringContent
+            if let vc = segue.destination as? UINavigationController {
+//                vc.title = stringContent
             }
         default:
             break
         }
     }
-
 }
