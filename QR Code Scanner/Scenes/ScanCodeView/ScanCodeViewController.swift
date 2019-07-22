@@ -21,6 +21,11 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     var previewLayer: AVCaptureVideoPreviewLayer!
     var imgView: UIImageView = UIImageView()
     var imagePicker: UIImagePickerController!
+    let mailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+    let urlRegEx = "^(https?://)?(www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6}(/[-\\w@\\+\\.~#\\?&/=%]*)?$"
+    let youtubeRegex = "(http(s)?:\\/\\/)?(www\\.|m\\.)?youtu(be\\.com|\\.be)(\\/watch\\?([&=a-z]{0,})(v=[\\d\\w]{1,}).+|\\/[\\d\\w]{1,})"
+    let facebookRegEx = "(http(s)?:\\/\\/)?(www\\.|m\\.)?f(acebook\\.com|b\\.com)"
+    var typeLink: String = ""
     
     @IBAction func btnAgain(_ sender: Any) {
         lblContentImage.text = ""
@@ -31,7 +36,22 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     @IBAction func btnOpenContent(_ sender: Any) {
         print("Press button btnOpenContent")
         if(stringContent != "default"){
-            self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
+            guard let number = URL(string: stringContent) else { return }
+            UIApplication.shared.open(number)
+//            self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
+//            if(typeLink == "facebook"){
+//
+//            } else if(typeLink == "youtube"){
+//
+//            } else if(typeLink == "email"){
+//
+//            } else if(typeLink == "phonenumber"){
+//
+//            } else if(typeLink == "web"){
+//                self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
+//            } else {
+//
+//            }
         }
     }
     
@@ -139,33 +159,32 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
     func checkContentFromCode(content: String){
         print("Check content: ", content)
-        let mailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        let urlRegEx = "^(https?://)?(www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6}(/[-\\w@\\+\\.~#\\?&/=%]*)?$"
-        let youtubeRegex = "(http(s)?:\\/\\/)?(www\\.|m\\.)?youtu(be\\.com|\\.be)(\\/watch\\?([&=a-z]{0,})(v=[\\d\\w]{1,}).+|\\/[\\d\\w]{1,})"
         
-        let facebookRegEx = "(http(s)?:\\/\\/)?(www\\.|m\\.)?f(acebook\\.com|b\\.com)"
-
-//        print("Check isValidEmail: ",isValidEmail(emailStr: content))
         if(extractPhoneNumber(content: content).count>1){
+            typeLink = "phonenumber"
             print("This is a phone number")
             btnOpen.setTitle("Call this number",for: .normal)
-        } else if(matchesEmail(for: mailRegEx, in: content).count>0){
+        } else if(matchesUrl(for: mailRegEx, in: content).count>0){
+            typeLink = "email"
             print("This is a email")
             btnOpen.setTitle("Send a email",for: .normal)
-        } else if(matchesEmail(for: youtubeRegex, in: content).count>0){
+        } else if(matchesUrl(for: youtubeRegex, in: content).count>0){
+            typeLink = "youtube"
             print("This is a url youtube")
             btnOpen.setTitle("Open in youtube",for: .normal)
-        } else if(matchesEmail(for: facebookRegEx, in: content).count>0){
+        } else if(matchesUrl(for: facebookRegEx, in: content).count>0){
+            typeLink = "facebook"
             print("This is a url facebook")
             btnOpen.setTitle("Open in Facebook",for: .normal)
-        } else if(matchesEmail(for: urlRegEx, in: content).count>0){
+        } else if(matchesUrl(for: urlRegEx, in: content).count>0){
+            typeLink = "web"
             print("This is a url")
             btnOpen.setTitle("Open this url",for: .normal)
         } else {
             print("This is another case!")
         }
         
-        print("Check matchesEmail: ", matchesEmail(for: urlRegEx, in: content))
+//        print("Check matchesEmail: ", matchesUrl(for: urlRegEx, in: content))
     }
     
     func extractPhoneNumber(content: String) -> String {
@@ -178,7 +197,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
-    func matchesEmail(for regex: String, in text: String) -> [String] {
+    func matchesUrl(for regex: String, in text: String) -> [String] {
         do {
             let regex = try NSRegularExpression(pattern: regex)
             let nsString = text as NSString
@@ -191,10 +210,42 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
-    func isValidEmail(emailStr:String) -> Bool {
-        let emailRegEx = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-        return emailPred.evaluate(with: emailStr)
+    func playInGoogleMap(urlLocation: String){
+        UIApplication.shared.openURL(URL(string:urlLocation)!)
+    }
+    
+    func playInYoutube(youtubeUrl: String) {
+        if let youtubeURL = URL(string: youtubeUrl),
+            UIApplication.shared.canOpenURL(youtubeURL) {
+            // redirect to app
+            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
+        } else if let youtubeURL = URL(string: youtubeUrl) {
+            // redirect through safari
+            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
+        }
+    }
+    
+    func playInFacebook(facebookUrl: String) {
+        if let youtubeURL = URL(string: facebookUrl),
+            UIApplication.shared.canOpenURL(youtubeURL) {
+            // redirect to app
+            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
+        } else if let youtubeURL = URL(string: facebookUrl) {
+            // redirect through safari
+            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
+        }
+    }
+    
+    
+    func openInstagram(instagramHandle: String) {
+        guard let url = URL(string: "https://instagram.com/\(instagramHandle)")  else { return }
+        if UIApplication.shared.canOpenURL(url) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
