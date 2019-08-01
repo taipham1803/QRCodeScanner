@@ -41,7 +41,7 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         textFieldInput.delegate = self
         
-        view.backgroundColor = UIColor.orange
+//        view.backgroundColor = UIColor.orange
         
         // Do any additional setup after loading the view.
     }

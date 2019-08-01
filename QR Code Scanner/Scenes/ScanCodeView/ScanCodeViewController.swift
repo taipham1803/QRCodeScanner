@@ -30,38 +30,34 @@ import PopupDialog
     }
 }
 
+class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate  {
 
-
-class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
-
-//    @IBOutlet weak var imgViewGallery: UIImageView!
     @IBOutlet weak var videoPreview: UIView!
     @IBOutlet weak var lblContentImage: UILabel!
     @IBOutlet weak var btnOpen: UIButton!
-    @IBOutlet weak var lblTitleOpen: UILabel!
-    @IBOutlet weak var tableViewOptionOpen: UITableView!
-    
     @IBOutlet var modalView: UIView!
-    
-    var stringContent:String = "default"
+    @IBOutlet weak var viewGroupTop: UIView!
+
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var imgView: UIImageView = UIImageView()
     var imagePicker: UIImagePickerController!
+    var backCamera: AVCaptureDevice?
+    var frontCamera: AVCaptureDevice?
+    var currentCamera: AVCaptureDevice?
+    
     let mailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
     let urlRegEx = "^(https?://)?(www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6}(/[-\\w@\\+\\.~#\\?&/=%]*)?$"
     let youtubeRegex = "(http(s)?:\\/\\/)?(www\\.|m\\.)?youtu(be\\.com|\\.be)(\\/watch\\?([&=a-z]{0,})(v=[\\d\\w]{1,}).+|\\/[\\d\\w]{1,})"
     let facebookRegEx = "(http(s)?:\\/\\/)?(www\\.|m\\.)?f(acebook\\.com|b\\.com)"
-    var typeLink: String = ""
     
+    var stringContent:String = "default"
+    var typeLink: String = ""
     let titleModal = "THIS IS THE DIALOG TITLE"
     let message = "This is the message section of the popup dialog default view"
     let image = UIImage(named: "pexels-photo-103290")
     let arrayOptionOpen = ["Open in Youtube", "Open in Safari", "Copy this link"]
     
-    // Create the dialog
-    
-    // Create buttons
     let buttonOne = CancelButton(title: "CANCEL") {
         print("You canceled the car dialog.")
     }
@@ -74,8 +70,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     let buttonThree = DefaultButton(title: "BUY CAR", height: 60) {
         print("Ah, maybe next time :)")
     }
-    
-    
     
     @IBAction func btnAgain(_ sender: Any) {
         lblContentImage.text = ""
@@ -107,69 +101,33 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
-    @IBAction func btnFromLibrary(_ sender: UIButton) {
-        self.openGallary()
-
-        print("Press button btnFromLibrary")
-//        btnFromLibrary.setTitleColor(UIColor.white, for: .normal)
-//        btnFromLibrary.isUserInteractionEnabled = true
-        
-//        let alert = UIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
-//        alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
-//            self.openCamera()
-//        }))
-        
-//        alert.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
-//            self.openGallary()
-//        }))
-
-//        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-        
-        /*If you want work actionsheet on ipad
-         then you have to use popoverPresentationController to present the actionsheet,
-         otherwise app will crash on iPad */
-//        switch UIDevice.current.userInterfaceIdiom {
-//        case .pad:
-//            alert.popoverPresentationController?.sourceView = sender
-//            alert.popoverPresentationController?.sourceRect = sender.bounds
-//            alert.popoverPresentationController?.permittedArrowDirections = .up
-//        default:
-//            break
-//        }
-//
-//        self.present(alert, animated: true, completion: nil)
+    @IBAction func btnSwitchCamera(_ sender: Any) {
     }
     
+    @IBAction func btnFlash(_ sender: Any) {
+        toggleTorch(on: true)
+    }
     
-    
-    @IBAction func btnHistoryScan(_ sender: Any) {
-        self.performSegue(withIdentifier: "segueScanToHistory", sender: 1)
-//        if let features = self.detectQRCode(UIImage(named: "qrcode")), !features.isEmpty{
-//            for case let row as CIQRCodeFeature in features{
-//                print(row.messageString ?? "nope")
-//                stringContent = row.messageString ?? "Can not scan this code!"
-//            }
-//        }
-        print("Press button btnHistoryScan")
+    @IBAction func btnFromLibrary(_ sender: UIButton) {
+        self.openGallary()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableViewOptionOpen.dataSource = self
-        tableViewOptionOpen.delegate = self
-        
         view.backgroundColor = UIColor.white
         captureSession = AVCaptureSession()
         imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         buildModalView()
+        buildViewGroupTop()
         autoCapture()
         let popup = PopupDialog(title: titleModal, message: message, image: image)
         popup.addButtons([buttonOne, buttonTwo, buttonThree])
         self.present(popup, animated: true, completion: nil)
-        
-//        loadModalOpen()
-        
+    }
+    
+    func buildViewGroupTop(){
+        viewGroupTop.layer.cornerRadius = 25
     }
     
     func buildModalView(){
@@ -181,14 +139,44 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         modalView.layer.shadowRadius = 5
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+    func flipCamera() {
+        captureSession.stopRunning()
+        previewLayer?.removeFromSuperlayer()
+        //cameraPreviewlayer = nil
+        //self.captureSession = nil
+        
+        setupCaptureSession()
+        if currentCamera! == backCamera{
+            //print(currentCamera)
+            currentCamera = frontCamera}
+        else {
+            currentCamera = backCamera}
+        setupCaptureSession()
+//        setupInputOutput()
+//        setupPreviewLayer()
+//        startRunningCaptureSession()
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "OptionTableViewCell") as? OptionTableViewCell
-        cell?.lblNameCell.text = arrayOptionOpen[indexPath.row]
-        return cell ?? UITableViewCell()
+    func toggleTorch(on: Bool) {
+        guard let device = AVCaptureDevice.default(for: .video) else { return }
+        
+        if device.hasTorch {
+            do {
+                try device.lockForConfiguration()
+                
+                if on == true {
+                    device.torchMode = .on
+                } else {
+                    device.torchMode = .off
+                }
+                
+                device.unlockForConfiguration()
+            } catch {
+                print("Torch could not be used")
+            }
+        } else {
+            print("Torch is not available")
+        }
     }
     
     func hideTableOptionOpen(){
@@ -200,11 +188,26 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
-    
     func loadModalOpen() {
         let modalVC = ModalViewController()
         let rect = CGRect(x: view.frame.origin.x, y: view.frame.maxY - modalVC.view.frame.maxY, width: view.frame.maxX, height: 400)
         add(modalVC, frame: rect)
+    }
+    
+    func setupCaptureSession(){
+        captureSession.sessionPreset = AVCaptureSession.Preset.photo // Why exclamation point?
+        let availableDevice = AVCaptureDevice.DiscoverySession(deviceTypes: [AVCaptureDevice.DeviceType.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
+        let devices = availableDevice.devices //back or front
+        
+        for device in devices {
+            
+            if device.position == AVCaptureDevice.Position.back{
+                backCamera = device
+            }else if device.position == AVCaptureDevice.Position.front{
+                frontCamera = device
+            }
+        }
+        currentCamera = backCamera
     }
     
     func autoCapture(){
@@ -237,11 +240,10 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
         
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = CGRect(x: 0.0, y: 0.0, width: 400.0, height: 550)
+        previewLayer.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - 100)
         previewLayer.backgroundColor = UIColor.red.cgColor
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
-//        videoPreview.layer.addSublayer(previewLayer)
         captureSession.startRunning()
     }
     

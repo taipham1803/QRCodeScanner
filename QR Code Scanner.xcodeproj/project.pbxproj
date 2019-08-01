@@ -22,6 +22,9 @@
 		C7ED072822F04A01008EF53C /* OptionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7ED072622F04A01008EF53C /* OptionTableViewCell.xib */; };
 		C7F28D4C22EF453100FD17C5 /* ModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F28D4A22EF453100FD17C5 /* ModalViewController.swift */; };
 		C7F28D4D22EF453100FD17C5 /* ModalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7F28D4B22EF453100FD17C5 /* ModalViewController.xib */; };
+		C7F4835422F2DA8500EEA8E0 /* ResultScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F4835322F2DA8500EEA8E0 /* ResultScan.swift */; };
+		C7F4835822F2DF9500EEA8E0 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */; };
+		C7F4835922F2DF9500EEA8E0 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +46,9 @@
 		C7ED072622F04A01008EF53C /* OptionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OptionTableViewCell.xib; sourceTree = "<group>"; };
 		C7F28D4A22EF453100FD17C5 /* ModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalViewController.swift; sourceTree = "<group>"; };
 		C7F28D4B22EF453100FD17C5 /* ModalViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ModalViewController.xib; sourceTree = "<group>"; };
+		C7F4835322F2DA8500EEA8E0 /* ResultScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultScan.swift; sourceTree = "<group>"; };
+		C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
+		C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HistoryTableViewCell.xib; sourceTree = "<group>"; };
 		EA0C01369375ED0DFB4E0022 /* Pods_QR_Code_Scanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QR_Code_Scanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -78,6 +84,8 @@
 		C72D5E9722E2C85F005109E3 /* HistoryView */ = {
 			isa = PBXGroup;
 			children = (
+				C7F4835522F2DF6C00EEA8E0 /* Cell */,
+				C7F4835222F2DA5300EEA8E0 /* Modal */,
 				C72D5E9822E2C888005109E3 /* HistoryViewController.swift */,
 			);
 			path = HistoryView;
@@ -179,6 +187,23 @@
 			path = Modal;
 			sourceTree = "<group>";
 		};
+		C7F4835222F2DA5300EEA8E0 /* Modal */ = {
+			isa = PBXGroup;
+			children = (
+				C7F4835322F2DA8500EEA8E0 /* ResultScan.swift */,
+			);
+			path = Modal;
+			sourceTree = "<group>";
+		};
+		C7F4835522F2DF6C00EEA8E0 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */,
+				C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -243,6 +268,7 @@
 				C7A6CCFA22E0145700B9A9DD /* LaunchScreen.storyboard in Resources */,
 				C7A6CCF722E0145700B9A9DD /* Assets.xcassets in Resources */,
 				C7ED072822F04A01008EF53C /* OptionTableViewCell.xib in Resources */,
+				C7F4835922F2DF9500EEA8E0 /* HistoryTableViewCell.xib in Resources */,
 				C7A6CCF222E0145600B9A9DD /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,6 +329,8 @@
 				C7AD111D22E170A800DB58FD /* ScanCodeViewController.swift in Sources */,
 				C7ED072722F04A01008EF53C /* OptionTableViewCell.swift in Sources */,
 				C7AD112322E1C2F800DB58FD /* ContentViewController.swift in Sources */,
+				C7F4835422F2DA8500EEA8E0 /* ResultScan.swift in Sources */,
+				C7F4835822F2DF9500EEA8E0 /* HistoryTableViewCell.swift in Sources */,
 				C72D5E9922E2C888005109E3 /* HistoryViewController.swift in Sources */,
 				C7A6CCED22E0145600B9A9DD /* AppDelegate.swift in Sources */,
 			);
