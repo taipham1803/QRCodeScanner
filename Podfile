@@ -7,4 +7,5 @@ target 'QR Code Scanner' do
 
   # Pods for QR Code Scanner
 	pod 'Gallery'
+  pod 'PopupDialog', '~> 1.1'
 end

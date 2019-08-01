@@ -8,13 +8,40 @@
 
 import UIKit
 import AVFoundation
+import MessageUI
+import PopupDialog
 
-class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+@nonobjc extension UIViewController {
+    func add(_ child: UIViewController, frame: CGRect? = nil) {
+        addChildViewController(child)
+        
+        if let frame = frame {
+            child.view.frame = frame
+        }
+        
+        view.addSubview(child.view)
+        child.didMove(toParentViewController: self)
+    }
+    
+    func remove() {
+        willMove(toParentViewController: nil)
+        view.removeFromSuperview()
+        removeFromParentViewController()
+    }
+}
 
-    @IBOutlet weak var imgViewGallery: UIImageView!
+
+
+class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
+
+//    @IBOutlet weak var imgViewGallery: UIImageView!
     @IBOutlet weak var videoPreview: UIView!
     @IBOutlet weak var lblContentImage: UILabel!
     @IBOutlet weak var btnOpen: UIButton!
+    @IBOutlet weak var lblTitleOpen: UILabel!
+    @IBOutlet weak var tableViewOptionOpen: UITableView!
+    
+    @IBOutlet var modalView: UIView!
     
     var stringContent:String = "default"
     var captureSession: AVCaptureSession!
@@ -27,6 +54,29 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     let facebookRegEx = "(http(s)?:\\/\\/)?(www\\.|m\\.)?f(acebook\\.com|b\\.com)"
     var typeLink: String = ""
     
+    let titleModal = "THIS IS THE DIALOG TITLE"
+    let message = "This is the message section of the popup dialog default view"
+    let image = UIImage(named: "pexels-photo-103290")
+    let arrayOptionOpen = ["Open in Youtube", "Open in Safari", "Copy this link"]
+    
+    // Create the dialog
+    
+    // Create buttons
+    let buttonOne = CancelButton(title: "CANCEL") {
+        print("You canceled the car dialog.")
+    }
+    
+    // This button will not the dismiss the dialog
+    let buttonTwo = DefaultButton(title: "ADMIRE CAR", dismissOnTap: false) {
+        print("What a beauty!")
+    }
+    
+    let buttonThree = DefaultButton(title: "BUY CAR", height: 60) {
+        print("Ah, maybe next time :)")
+    }
+    
+    
+    
     @IBAction func btnAgain(_ sender: Any) {
         lblContentImage.text = ""
         captureSession.stopRunning()
@@ -36,8 +86,10 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     @IBAction func btnOpenContent(_ sender: Any) {
         print("Press button btnOpenContent")
         if(stringContent != "default"){
-            guard let number = URL(string: stringContent) else { return }
-            UIApplication.shared.open(number)
+            guard let content = URL(string: stringContent) else {
+                return
+            }
+            UIApplication.shared.open(content)
 //            self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
 //            if(typeLink == "facebook"){
 //
@@ -103,20 +155,56 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableViewOptionOpen.dataSource = self
+        tableViewOptionOpen.delegate = self
         
         view.backgroundColor = UIColor.white
         captureSession = AVCaptureSession()
         imagePicker = UIImagePickerController()
         imagePicker.delegate = self
+        buildModalView()
         autoCapture()
-//        let content = "Good morning, 627137152 \n Good morning, +34627217154 \n Good morning, 627 11 71 54"
-//        let contentPhone = "tel:+84869898203"
-//        if(checkContainPhoneNo(content: contentPhone)){
-//            print("This string contain phone number")
-//        } else {
-//            print("This string have no phone number")
-//        }
-
+        let popup = PopupDialog(title: titleModal, message: message, image: image)
+        popup.addButtons([buttonOne, buttonTwo, buttonThree])
+        self.present(popup, animated: true, completion: nil)
+        
+//        loadModalOpen()
+        
+    }
+    
+    func buildModalView(){
+        modalView.layer.cornerRadius = 5
+        modalView.backgroundColor = .white
+        modalView.layer.shadowColor = UIColor.gray.cgColor
+        modalView.layer.shadowOpacity = 1
+        modalView.layer.shadowOffset = CGSize.zero
+        modalView.layer.shadowRadius = 5
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "OptionTableViewCell") as? OptionTableViewCell
+        cell?.lblNameCell.text = arrayOptionOpen[indexPath.row]
+        return cell ?? UITableViewCell()
+    }
+    
+    func hideTableOptionOpen(){
+        let screenSize = UIScreen.main.bounds.size
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 1.0, options: .curveEaseInOut, animations: {
+            self.modalView.frame = CGRect(x: 0, y: screenSize.height, width: screenSize.width, height: screenSize.height)
+        }){ (success:Bool) in
+            self.modalView.removeFromSuperview()
+        }
+    }
+    
+    
+    func loadModalOpen() {
+        let modalVC = ModalViewController()
+        let rect = CGRect(x: view.frame.origin.x, y: view.frame.maxY - modalVC.view.frame.maxY, width: view.frame.maxX, height: 400)
+        add(modalVC, frame: rect)
     }
     
     func autoCapture(){
@@ -164,28 +252,41 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
             typeLink = "phonenumber"
             print("This is a phone number")
             btnOpen.setTitle("Call this number",for: .normal)
-        } else if(matchesUrl(for: mailRegEx, in: content).count>0){
+        } else if(checkTypeContent(for: mailRegEx, in: content).count>0){
             typeLink = "email"
             print("This is a email")
             btnOpen.setTitle("Send a email",for: .normal)
-        } else if(matchesUrl(for: youtubeRegex, in: content).count>0){
+        } else if(checkTypeContent(for: youtubeRegex, in: content).count>0){
             typeLink = "youtube"
             print("This is a url youtube")
             btnOpen.setTitle("Open in youtube",for: .normal)
-        } else if(matchesUrl(for: facebookRegEx, in: content).count>0){
+        } else if(checkTypeContent(for: facebookRegEx, in: content).count>0){
             typeLink = "facebook"
             print("This is a url facebook")
             btnOpen.setTitle("Open in Facebook",for: .normal)
-        } else if(matchesUrl(for: urlRegEx, in: content).count>0){
+        } else if(content.contains("www.google.com/maps")){
+            typeLink = "map"
+            print("This is a url map")
+            btnOpen.setTitle("Open in Maps",for: .normal)
+        } else if(checkTypeContent(for: urlRegEx, in: content).count>0){
             typeLink = "web"
             print("This is a url")
             btnOpen.setTitle("Open this url",for: .normal)
+        } else if(content.contains("WIFI")){
+            typeLink = "wifi"
+            print("This is a wifi code")
+            btnOpen.setTitle("Open wifi",for: .normal)
+        } else if(content.contains("WIFI")){
+            typeLink = "wifi"
+            print("This is a wifi code")
+            btnOpen.setTitle("Open wifi",for: .normal)
         } else {
             print("This is another case!")
         }
         
 //        print("Check matchesEmail: ", matchesUrl(for: urlRegEx, in: content))
     }
+    
     
     func extractPhoneNumber(content: String) -> String {
         let tempphone = content.components(separatedBy: CharacterSet.decimalDigits.inverted).joined(separator: "")
@@ -197,7 +298,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
-    func matchesUrl(for regex: String, in text: String) -> [String] {
+    func checkTypeContent(for regex: String, in text: String) -> [String] {
         do {
             let regex = try NSRegularExpression(pattern: regex)
             let nsString = text as NSString
@@ -251,7 +352,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         print("Run on imagePickerController")
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-        imgViewGallery.image = image
+//        imgViewGallery.image = image
         
         if let features = self.detectQRCode(image), !features.isEmpty{
             for case let row as CIQRCodeFeature in features{
@@ -339,7 +440,13 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     func found(code: String) {
         print(code)
         stringContent = code
-        lblContentImage.text = code 
+        lblContentImage.text = code
+        
+        let theHeight = view.frame.size.height
+        let heightSubView = CGFloat(integerLiteral: 340)
+        modalView.frame = CGRect(x: 0, y: theHeight - heightSubView , width: self.view.frame.width, height: heightSubView)
+        modalView.layer.cornerRadius = 12
+        self.view.addSubview(modalView)
         
 //        self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
     }
@@ -366,11 +473,11 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
                     vcRoot.stringUrl = stringContent
                 }
             }
-        case "segueScanToHistory":
-            print(segue.destination)
-            if let vc = segue.destination as? UINavigationController {
+//        case "segueScanToHistory":
+//            print(segue.destination)
+//            if let vc = segue.destination as? UINavigationController {
 //                vc.title = stringContent
-            }
+//            }
         default:
             break
         }

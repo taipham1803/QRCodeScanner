@@ -18,6 +18,10 @@
 		C7AD111D22E170A800DB58FD /* ScanCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7AD111C22E170A800DB58FD /* ScanCodeViewController.swift */; };
 		C7AD111F22E170B600DB58FD /* GenerateCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7AD111E22E170B600DB58FD /* GenerateCodeViewController.swift */; };
 		C7AD112322E1C2F800DB58FD /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7AD112222E1C2F800DB58FD /* ContentViewController.swift */; };
+		C7ED072722F04A01008EF53C /* OptionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7ED072522F04A01008EF53C /* OptionTableViewCell.swift */; };
+		C7ED072822F04A01008EF53C /* OptionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7ED072622F04A01008EF53C /* OptionTableViewCell.xib */; };
+		C7F28D4C22EF453100FD17C5 /* ModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F28D4A22EF453100FD17C5 /* ModalViewController.swift */; };
+		C7F28D4D22EF453100FD17C5 /* ModalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7F28D4B22EF453100FD17C5 /* ModalViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +39,10 @@
 		C7AD111C22E170A800DB58FD /* ScanCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanCodeViewController.swift; sourceTree = "<group>"; };
 		C7AD111E22E170B600DB58FD /* GenerateCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeViewController.swift; sourceTree = "<group>"; };
 		C7AD112222E1C2F800DB58FD /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
+		C7ED072522F04A01008EF53C /* OptionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionTableViewCell.swift; sourceTree = "<group>"; };
+		C7ED072622F04A01008EF53C /* OptionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OptionTableViewCell.xib; sourceTree = "<group>"; };
+		C7F28D4A22EF453100FD17C5 /* ModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalViewController.swift; sourceTree = "<group>"; };
+		C7F28D4B22EF453100FD17C5 /* ModalViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ModalViewController.xib; sourceTree = "<group>"; };
 		EA0C01369375ED0DFB4E0022 /* Pods_QR_Code_Scanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QR_Code_Scanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -128,6 +136,7 @@
 		C7AD111A22E1708D00DB58FD /* ScanCodeView */ = {
 			isa = PBXGroup;
 			children = (
+				C7F28D4522EF448700FD17C5 /* Modal */,
 				C7AD111C22E170A800DB58FD /* ScanCodeViewController.swift */,
 			);
 			path = ScanCodeView;
@@ -157,6 +166,17 @@
 				C7AD112222E1C2F800DB58FD /* ContentViewController.swift */,
 			);
 			path = ContentCodeView;
+			sourceTree = "<group>";
+		};
+		C7F28D4522EF448700FD17C5 /* Modal */ = {
+			isa = PBXGroup;
+			children = (
+				C7F28D4A22EF453100FD17C5 /* ModalViewController.swift */,
+				C7F28D4B22EF453100FD17C5 /* ModalViewController.xib */,
+				C7ED072522F04A01008EF53C /* OptionTableViewCell.swift */,
+				C7ED072622F04A01008EF53C /* OptionTableViewCell.xib */,
+			);
+			path = Modal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,8 +239,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7F28D4D22EF453100FD17C5 /* ModalViewController.xib in Resources */,
 				C7A6CCFA22E0145700B9A9DD /* LaunchScreen.storyboard in Resources */,
 				C7A6CCF722E0145700B9A9DD /* Assets.xcassets in Resources */,
+				C7ED072822F04A01008EF53C /* OptionTableViewCell.xib in Resources */,
 				C7A6CCF222E0145600B9A9DD /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,10 +296,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7F28D4C22EF453100FD17C5 /* ModalViewController.swift in Sources */,
 				C7AD111F22E170B600DB58FD /* GenerateCodeViewController.swift in Sources */,
 				C7A6CCF522E0145600B9A9DD /* QR_Code_Scanner.xcdatamodeld in Sources */,
 				C7A6CCEF22E0145600B9A9DD /* ViewController.swift in Sources */,
 				C7AD111D22E170A800DB58FD /* ScanCodeViewController.swift in Sources */,
+				C7ED072722F04A01008EF53C /* OptionTableViewCell.swift in Sources */,
 				C7AD112322E1C2F800DB58FD /* ContentViewController.swift in Sources */,
 				C72D5E9922E2C888005109E3 /* HistoryViewController.swift in Sources */,
 				C7A6CCED22E0145600B9A9DD /* AppDelegate.swift in Sources */,

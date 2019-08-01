@@ -4,22 +4,36 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>DynamicBlurView.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
 		<key>Gallery.xcscheme</key>
 		<dict>
 			<key>isShown</key>
-			<false/>
+			<false />
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
 		</dict>
 		<key>Pods-QR Code Scanner.xcscheme</key>
 		<dict>
 			<key>isShown</key>
-			<false/>
+			<false />
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>2</integer>
+		</dict>
+		<key>PopupDialog.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>3</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
-	<dict/>
+	<dict />
 </dict>
 </plist>
