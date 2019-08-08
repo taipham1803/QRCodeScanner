@@ -32,12 +32,48 @@ import PopupDialog
 
 class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate  {
 
-    @IBOutlet weak var videoPreview: UIView!
-    @IBOutlet weak var lblContentImage: UILabel!
-    @IBOutlet weak var btnOpen: UIButton!
+    enum CameraType {
+        case Front
+        case Back
+    }
+    
+
+    @IBOutlet weak var modalBottomContent: UIView!
+    //    var cameraCheck = CameraType.Back
+//    
+//    func addVideoInput() {
+//        if cameraCheck ==  CameraType.Front  {
+//            cameraCheck = CameraType.Back
+//            let device: AVCaptureDevice = self.deviceWithMediaTypeWithPosition(AVMediaTypeVideo, position: AVCaptureDevice.Position.Front)
+//            do {
+//                let input = try AVCaptureDeviceInput(device: device)
+//                if self.captureSession.canAddInput(input) {
+//                    self.captureSession.addInput(input)
+//                }
+//            } catch {
+//                print(error)
+//            }
+//        }else{
+//            cameraCheck = CameraType.Front
+//            let device: AVCaptureDevice = self.deviceWithMediaTypeWithPosition(AVMediaTypeVideo, position: AVCaptureDevice.Position.Back)
+//            do {
+//                let input = try AVCaptureDeviceInput(device: device)
+//                if self.captureSession.canAddInput(input) {
+//                    self.captureSession.addInput(input)
+//                }
+//            } catch {
+//                print(error)
+//            }
+//        }
+//    }
+
     @IBOutlet var modalView: UIView!
     @IBOutlet weak var viewGroupTop: UIView!
-
+    @IBOutlet weak var lblTitle: UILabel!
+    @IBOutlet weak var lblContent: UILabel!
+    @IBOutlet weak var lblShowContentCode: UILabel!
+    @IBOutlet weak var lblTypeDetected: UILabel!
+    
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var imgView: UIImageView = UIImageView()
@@ -51,18 +87,19 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     let youtubeRegex = "(http(s)?:\\/\\/)?(www\\.|m\\.)?youtu(be\\.com|\\.be)(\\/watch\\?([&=a-z]{0,})(v=[\\d\\w]{1,}).+|\\/[\\d\\w]{1,})"
     let facebookRegEx = "(http(s)?:\\/\\/)?(www\\.|m\\.)?f(acebook\\.com|b\\.com)"
     
+    var typeContentDetected:String = ""
     var stringContent:String = "default"
     var typeLink: String = ""
     let titleModal = "THIS IS THE DIALOG TITLE"
     let message = "This is the message section of the popup dialog default view"
     let image = UIImage(named: "pexels-photo-103290")
     let arrayOptionOpen = ["Open in Youtube", "Open in Safari", "Copy this link"]
+    var isOpenFlash: Bool = false
     
     let buttonOne = CancelButton(title: "CANCEL") {
         print("You canceled the car dialog.")
     }
     
-    // This button will not the dismiss the dialog
     let buttonTwo = DefaultButton(title: "ADMIRE CAR", dismissOnTap: false) {
         print("What a beauty!")
     }
@@ -71,8 +108,11 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         print("Ah, maybe next time :)")
     }
     
+    @IBAction func btnCloseBottomModal(_ sender: Any) {
+        hideTableOptionOpen()
+    }
+    
     @IBAction func btnAgain(_ sender: Any) {
-        lblContentImage.text = ""
         captureSession.stopRunning()
         captureSession.startRunning()
     }
@@ -84,32 +124,72 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
                 return
             }
             UIApplication.shared.open(content)
-//            self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
-//            if(typeLink == "facebook"){
-//
-//            } else if(typeLink == "youtube"){
-//
-//            } else if(typeLink == "email"){
-//
-//            } else if(typeLink == "phonenumber"){
-//
-//            } else if(typeLink == "web"){
-//                self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
-//            } else {
-//
-//            }
+
         }
     }
     
+    @IBAction func btnOpenBottomModal(_ sender: Any) {
+        animateIn()
+    }
+    
     @IBAction func btnSwitchCamera(_ sender: Any) {
+//        self.camera = nil
+//
+//        self.initializeCamera()
+//        self.establishVideoPreviewArea()
+//
+//        if isBackCamera == true {
+//            isBackCamera = false
+//            self.camera?.cameraCheck = CameraType.Front
+//        }else{
+//            isBackCamera = true
+//            self.camera?.cameraCheck = CameraType.Back
+//        }
     }
     
     @IBAction func btnFlash(_ sender: Any) {
-        toggleTorch(on: true)
+        if(isOpenFlash){
+            isOpenFlash = false
+        } else {
+            isOpenFlash = true
+        }
+        toggleTorch(on: isOpenFlash)
     }
     
     @IBAction func btnFromLibrary(_ sender: UIButton) {
         self.openGallary()
+    }
+    
+    let pasteboard = UIPasteboard.general
+    @IBAction func btnCopy(_ sender: Any) {
+        displayToastMessage("Copied to clipboard")
+        pasteboard.string = stringContent
+    }
+    
+    @IBAction func btnSafari(_ sender: Any) {
+        guard let url = URL(string: stringContent) else { return }
+        UIApplication.shared.open(url)
+    }
+    
+    @IBAction func btnChrome(_ sender: Any) {
+        guard let url = URL(string: stringContent) else { return }
+        UIApplication.shared.open(url)
+    }
+    
+    @IBAction func btnShare(_ sender: Any) {
+//        hideTableOptionOpen()
+        let text = stringContent
+        
+        // set up activity view controller
+        let textToShare = [ text ]
+        let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
+        
+        // exclude some activity types from the list (optional)
+        activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
+        
+        // present the view controller
+        self.present(activityViewController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
@@ -124,6 +204,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         let popup = PopupDialog(title: titleModal, message: message, image: image)
         popup.addButtons([buttonOne, buttonTwo, buttonThree])
         self.present(popup, animated: true, completion: nil)
+//        view.addSubview()
     }
     
     func buildViewGroupTop(){
@@ -139,23 +220,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         modalView.layer.shadowRadius = 5
     }
     
-    func flipCamera() {
-        captureSession.stopRunning()
-        previewLayer?.removeFromSuperlayer()
-        //cameraPreviewlayer = nil
-        //self.captureSession = nil
-        
-        setupCaptureSession()
-        if currentCamera! == backCamera{
-            //print(currentCamera)
-            currentCamera = frontCamera}
-        else {
-            currentCamera = backCamera}
-        setupCaptureSession()
-//        setupInputOutput()
-//        setupPreviewLayer()
-//        startRunningCaptureSession()
-    }
+
     
     func toggleTorch(on: Bool) {
         guard let device = AVCaptureDevice.default(for: .video) else { return }
@@ -179,6 +244,37 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
+    func animateIn(){
+        let theHeight = view.frame.size.height
+        let heightSubView = CGFloat(integerLiteral: 240)
+        modalView.frame = CGRect(x: 20, y: theHeight - heightSubView - 100 , width: self.view.frame.width - 40, height: heightSubView)
+        modalView.layer.cornerRadius = 12
+//        modalView.center =
+        
+//        let size = 260
+//        let screenWidth = self.view.frame.size.width
+//
+//        let frame = CGRectMake((screenWidth / 2) - CGFloat((size / 2)), 30, size, size)
+//        let draggableView = DraggableView(frame: frame)
+//
+//        self.view.addSubview(draggableView)
+//        
+//        modalView.center.x = view.center.x
+        self.view.addSubview(modalView)
+        let transition = CATransition()
+        transition.duration = 0.5
+//        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+//        transition.type = .moveIn
+//        transition.subtype = .fromTop
+        modalView?.layer.add(transition, forKey: kCATransition)
+        modalView.alpha = 0
+        
+        UIView.animate(withDuration: 0.4){
+            self.modalView.alpha = 1
+            self.modalView.transform = CGAffineTransform.identity
+        }
+    }
+    
     func hideTableOptionOpen(){
         let screenSize = UIScreen.main.bounds.size
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 1.0, options: .curveEaseInOut, animations: {
@@ -194,21 +290,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         add(modalVC, frame: rect)
     }
     
-    func setupCaptureSession(){
-        captureSession.sessionPreset = AVCaptureSession.Preset.photo // Why exclamation point?
-        let availableDevice = AVCaptureDevice.DiscoverySession(deviceTypes: [AVCaptureDevice.DeviceType.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
-        let devices = availableDevice.devices //back or front
-        
-        for device in devices {
-            
-            if device.position == AVCaptureDevice.Position.back{
-                backCamera = device
-            }else if device.position == AVCaptureDevice.Position.front{
-                frontCamera = device
-            }
-        }
-        currentCamera = backCamera
-    }
+
     
     func autoCapture(){
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else { return }
@@ -238,12 +320,13 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
             failed()
             return
         }
-        
+    
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - 100)
+        previewLayer.frame = CGRect(x: 0.0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - 50)
         previewLayer.backgroundColor = UIColor.red.cgColor
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
+        view.addSubview(viewGroupTop)
         captureSession.startRunning()
     }
     
@@ -251,42 +334,63 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         print("Check content: ", content)
         
         if(extractPhoneNumber(content: content).count>1){
-            typeLink = "phonenumber"
-            print("This is a phone number")
-            btnOpen.setTitle("Call this number",for: .normal)
+            typeContentDetected = "Phone Number"
         } else if(checkTypeContent(for: mailRegEx, in: content).count>0){
-            typeLink = "email"
-            print("This is a email")
-            btnOpen.setTitle("Send a email",for: .normal)
+            typeContentDetected = "Email"
         } else if(checkTypeContent(for: youtubeRegex, in: content).count>0){
-            typeLink = "youtube"
-            print("This is a url youtube")
-            btnOpen.setTitle("Open in youtube",for: .normal)
+            typeContentDetected = "Youtube"
         } else if(checkTypeContent(for: facebookRegEx, in: content).count>0){
-            typeLink = "facebook"
-            print("This is a url facebook")
-            btnOpen.setTitle("Open in Facebook",for: .normal)
+            typeContentDetected = "Facebook"
         } else if(content.contains("www.google.com/maps")){
-            typeLink = "map"
-            print("This is a url map")
-            btnOpen.setTitle("Open in Maps",for: .normal)
+            typeContentDetected = "Google Map"
         } else if(checkTypeContent(for: urlRegEx, in: content).count>0){
-            typeLink = "web"
-            print("This is a url")
-            btnOpen.setTitle("Open this url",for: .normal)
+            typeContentDetected = "URL"
         } else if(content.contains("WIFI")){
-            typeLink = "wifi"
-            print("This is a wifi code")
-            btnOpen.setTitle("Open wifi",for: .normal)
-        } else if(content.contains("WIFI")){
-            typeLink = "wifi"
-            print("This is a wifi code")
-            btnOpen.setTitle("Open wifi",for: .normal)
+            typeContentDetected = "WIFI"
         } else {
+            typeContentDetected = "Another type"
             print("This is another case!")
         }
         
-//        print("Check matchesEmail: ", matchesUrl(for: urlRegEx, in: content))
+    }
+    
+    func displayToastMessage(_ message : String) {
+        
+        let toastView = UILabel()
+        toastView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        toastView.textColor = UIColor.white
+        toastView.textAlignment = .center
+        toastView.font = UIFont.preferredFont(forTextStyle: .caption1)
+        toastView.layer.cornerRadius = 25
+        toastView.layer.masksToBounds = true
+        toastView.text = message
+        toastView.numberOfLines = 0
+        toastView.alpha = 0
+        toastView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let window = UIApplication.shared.delegate?.window!
+        window?.addSubview(toastView)
+        
+        let horizontalCenterContraint: NSLayoutConstraint = NSLayoutConstraint(item: toastView, attribute: .centerX, relatedBy: .equal, toItem: window, attribute: .centerX, multiplier: 1, constant: 0)
+        
+        let widthContraint: NSLayoutConstraint = NSLayoutConstraint(item: toastView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 275)
+        
+        let verticalContraint: [NSLayoutConstraint] = NSLayoutConstraint.constraints(withVisualFormat: "V:|-(>=200)-[loginView(==50)]-68-|", options: [.alignAllCenterX, .alignAllCenterY], metrics: nil, views: ["loginView": toastView])
+        
+        NSLayoutConstraint.activate([horizontalCenterContraint, widthContraint])
+        NSLayoutConstraint.activate(verticalContraint)
+        
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
+            toastView.alpha = 1
+        }, completion: nil)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double((Int64)(2 * NSEC_PER_SEC)) / Double(NSEC_PER_SEC), execute: {
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
+                toastView.alpha = 0
+            }, completion: { finished in
+                toastView.removeFromSuperview()
+            })
+        })
     }
     
     
@@ -314,7 +418,12 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     }
     
     func playInGoogleMap(urlLocation: String){
-        UIApplication.shared.openURL(URL(string:urlLocation)!)
+//        UIApplication.shared.openURL(URL(string:urlLocation)!)
+        
+        if let urlValidate = URL(string: urlLocation),
+            UIApplication.shared.canOpenURL(urlValidate) {
+            UIApplication.shared.open(urlValidate, options: [:], completionHandler: nil)
+        }
     }
     
     func playInYoutube(youtubeUrl: String) {
@@ -359,31 +468,32 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         if let features = self.detectQRCode(image), !features.isEmpty{
             for case let row as CIQRCodeFeature in features{
                 print(row.messageString ?? "nope")
-                lblContentImage.text = row.messageString ?? "nope"
                 stringContent = row.messageString ?? "Can not scan this code!"
             }
         }
-        checkContentFromCode(content: stringContent)
         
         picker.dismiss(animated: true, completion: nil)
+        
+        checkContentFromCode(content: stringContent)
+        lblShowContentCode.text = stringContent
+        lblTypeDetected.text = typeContentDetected
+        animateIn()
+        
 //        picker.dismiss(animated: true) {
 //            self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
 //        }
         
     }
     
-    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated:  true, completion: nil)
     }
 
-    
     func openGallary(){
         imagePicker.sourceType = UIImagePickerControllerSourceType.photoLibrary
         imagePicker.allowsEditing = true
         self.present(imagePicker, animated: true, completion: nil)
     }
-    
     
     func detectQRCode(_ image: UIImage?) -> [CIFeature]? {
         if let image = image, let ciImage = CIImage.init(image: image){
@@ -425,15 +535,15 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
-    
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
-        captureSession.stopRunning()
-        
+//        captureSession.stopRunning()
         if let metadataObject = metadataObjects.first {
             guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
             guard let stringValue = readableObject.stringValue else { return }
-            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
-            found(code: stringValue)
+            if(stringValue != stringContent){
+                AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+                found(code: stringValue)
+            }
         }
         
         dismiss(animated: true)
@@ -441,14 +551,22 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
     func found(code: String) {
         print(code)
+        typeContentDetected = ""
+        checkContentFromCode(content: stringContent)
         stringContent = code
-        lblContentImage.text = code
+        lblShowContentCode.text = code
+//        lblContentImage.text = code
+        lblTypeDetected.text = typeContentDetected
+        print("Check typeContentDetected", typeContentDetected)
         
         let theHeight = view.frame.size.height
         let heightSubView = CGFloat(integerLiteral: 340)
         modalView.frame = CGRect(x: 0, y: theHeight - heightSubView , width: self.view.frame.width, height: heightSubView)
         modalView.layer.cornerRadius = 12
-        self.view.addSubview(modalView)
+//        self.view.addSubview(modalView)
+        animateIn()
+        let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: stringContent, type: typeContentDetected)
+        ScanManager.shared.saveNewScanResult(scan: newScan)
         
 //        self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
     }
@@ -475,11 +593,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
                     vcRoot.stringUrl = stringContent
                 }
             }
-//        case "segueScanToHistory":
-//            print(segue.destination)
-//            if let vc = segue.destination as? UINavigationController {
-//                vc.title = stringContent
-//            }
         default:
             break
         }

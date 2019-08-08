@@ -13,6 +13,7 @@ class HistoryTableViewCell: UITableViewCell {
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var lblBody: UILabel!
     @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var viewCustom: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -33,12 +34,21 @@ class HistoryTableViewCell: UITableViewCell {
     
     
     func setupUI() {
-        self.containerView.layer.shadowColor = UIColor.gray.cgColor
-        self.containerView.layer.shadowPath = UIBezierPath.init(roundedRect: self.containerView.bounds, cornerRadius: 10).cgPath
-        self.containerView.backgroundColor = .white
-//        self.containerView.layer.cornerRadius = 12
-        self.containerView.layer.shadowOpacity = 0.9
-        self.containerView.layer.shadowRadius = 5
+        
+        self.viewCustom.layer.cornerRadius = 14
+        self.viewCustom.layer.masksToBounds = true
+        
+        self.layer.masksToBounds = false
+        self.layer.shadowOffset = CGSize(width: 0, height: 3)
+        self.layer.shadowColor = UIColor.gray.cgColor
+        self.layer.shadowOpacity = 0.6
+        self.layer.shadowRadius = 7
+//        self.viewCustom.layer.shadowColor = UIColor.gray.cgColor
+//        self.viewCustom.layer.shadowPath = UIBezierPath.init(roundedRect: self.viewCustom.bounds, cornerRadius: 10).cgPath
+//        self.viewCustom.backgroundColor = .white
+//        self.viewCustom.layer.cornerRadius = 12
+//        self.viewCustom.layer.shadowOpacity = 0.6
+//        self.viewCustom.layer.shadowRadius = 0.5
 //        imgImage.layer.cornerRadius = 12
     }
     

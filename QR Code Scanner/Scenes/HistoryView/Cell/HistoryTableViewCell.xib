@@ -19,27 +19,46 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="107.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Type content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Bj-fS-nzx">
-                        <rect key="frame" x="16" y="12" width="288" height="30"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Body content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Az-YU-ZFK">
-                        <rect key="frame" x="16" y="40" width="288" height="54"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iPo-Wt-BVK">
+                        <rect key="frame" x="12" y="6" width="296" height="95.5"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="https://www.apple.com/au/shop/buy-mac/imac" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Az-YU-ZFK">
+                                <rect key="frame" x="12" y="44.5" width="268" height="41"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Type content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Bj-fS-nzx">
+                                <rect key="frame" x="12" y="12" width="268" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="7Az-YU-ZFK" secondAttribute="trailing" constant="16" id="9xp-Cp-WID"/>
+                            <constraint firstAttribute="trailing" secondItem="4Bj-fS-nzx" secondAttribute="trailing" constant="16" id="B5v-9M-b0g"/>
+                            <constraint firstItem="7Az-YU-ZFK" firstAttribute="leading" secondItem="iPo-Wt-BVK" secondAttribute="leading" constant="12" id="UJZ-Ce-myG"/>
+                            <constraint firstItem="7Az-YU-ZFK" firstAttribute="top" secondItem="4Bj-fS-nzx" secondAttribute="bottom" constant="12" id="jjZ-pg-iOj"/>
+                            <constraint firstItem="4Bj-fS-nzx" firstAttribute="leading" secondItem="iPo-Wt-BVK" secondAttribute="leading" constant="12" id="nr1-T9-eHi"/>
+                            <constraint firstItem="4Bj-fS-nzx" firstAttribute="top" secondItem="iPo-Wt-BVK" secondAttribute="top" constant="12" id="zy3-C7-FH8"/>
+                        </constraints>
+                    </view>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="iPo-Wt-BVK" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="3V4-wG-tPo"/>
+                    <constraint firstAttribute="trailing" secondItem="iPo-Wt-BVK" secondAttribute="trailing" constant="12" id="7dK-hH-XEM"/>
+                    <constraint firstItem="iPo-Wt-BVK" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="6" id="S1b-oG-XZf"/>
+                    <constraint firstAttribute="bottom" secondItem="iPo-Wt-BVK" secondAttribute="bottom" constant="6" id="y8F-C4-2gZ"/>
+                </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="containerView" destination="H2p-sc-9uM" id="Xlf-FE-4Uj"/>
                 <outlet property="lblBody" destination="7Az-YU-ZFK" id="rbH-s7-FaV"/>
                 <outlet property="lblTitle" destination="4Bj-fS-nzx" id="RLW-x9-0yW"/>
+                <outlet property="viewCustom" destination="iPo-Wt-BVK" id="AaY-08-Blj"/>
             </connections>
             <point key="canvasLocation" x="34.782608695652179" y="56.25"/>
         </tableViewCell>
