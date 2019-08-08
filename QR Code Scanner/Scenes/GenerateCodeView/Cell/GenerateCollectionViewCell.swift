@@ -27,7 +27,7 @@ class GenerateCollectionViewCell: UICollectionViewCell {
     
     
     func setupUI() {
-        self.lblMainViewCell.layer.cornerRadius = 14
+        self.lblMainViewCell.layer.cornerRadius = 12
         self.lblMainViewCell.layer.masksToBounds = true
         
         self.layer.masksToBounds = false

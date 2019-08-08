@@ -12,6 +12,8 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     @IBOutlet weak var lblNoHistory: UILabel!
     @IBOutlet weak var tableViewHistory: UITableView!
+    
+    let pasteboard = UIPasteboard.general
     let historyCellID = "HistoryTableViewCell"
     
 //    let arrayResultScan:[Scan] = [
@@ -53,6 +55,65 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
 //        cell?.layer.cornerRadius = 25
         cell?.backgroundColor = UIColor(white: 1, alpha: 0)
         return cell ?? UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Tap on tableView in ", indexPath.row)
+        showActionSheetButtonTapped()
+        
+    }
+    
+    func shareContent(text: String){
+        // set up activity view controller
+        let textToShare = [ text ]
+        let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
+        
+        // exclude some activity types from the list (optional)
+        activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
+        
+        // present the view controller
+        self.present(activityViewController, animated: true, completion: nil)
+    }
+    
+    func showActionSheetButtonTapped(){
+        let myActionSheet = UIAlertController(title: "Color", message: "What do you want?", preferredStyle: UIAlertController.Style.actionSheet)
+        
+        // blue action button
+        let blueAction = UIAlertAction(title: "Open on Safari", style: UIAlertAction.Style.default) { (action) in
+            print("Open on Safari button tapped")
+            guard let url = URL(string: "https://emddi.com") else { return }
+            UIApplication.shared.open(url)
+        }
+        
+        // red action button
+        let redAction = UIAlertAction(title: "Copy to clipboard", style: UIAlertAction.Style.default) { (action) in
+            print("Copy to clipboard button tapped")
+            ScanManager.shared.displayToastMessage("Copied to clipboard")
+            self.pasteboard.string = "Copied to clipboard"
+        }
+        
+        // yellow action button
+        let yellowAction = UIAlertAction(title: "Share", style: UIAlertAction.Style.default) { (action) in
+            print("Share button tapped")
+            self.shareContent(text: "This is my content!")
+        }
+        
+        // cancel action button
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (action) in
+            print("Cancel action button tapped")
+        }
+        
+        // add action buttons to action sheet
+        myActionSheet.addAction(blueAction)
+        myActionSheet.addAction(redAction)
+        myActionSheet.addAction(yellowAction)
+        myActionSheet.addAction(cancelAction)
+        
+        // present the action sheet
+        DispatchQueue.main.async {
+            self.present(myActionSheet, animated: true, completion: nil)
+        }
     }
 
 }

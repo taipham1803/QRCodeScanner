@@ -15,7 +15,7 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
     @IBOutlet weak var textFieldInput: UITextField!
     @IBOutlet weak var imgViewQRCode: UIImageView!
     var stringInput:String = ""
-    let GenerateCellID = "GenerateCodeCell"
+    let GenerateCollectionViewCell = "GenerateCollectionViewCell"
     
     let arrayFunctionCell:[String] = [
         "Website",
@@ -52,6 +52,32 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
         
     }
     
+//    func validateName(name: String) -> Bool{
+//        if(name.count>3){
+//            return true
+//        } else {
+//            return false
+//        }
+//    }
+//
+//    func validateEmail(email: String) -> Bool{
+//        if(email.count>6){
+//            return true
+//        } else {
+//            return false
+//        }
+//    }
+//
+//    func validatePhone(phone: String) -> Bool{
+//        if(phone.count>6){
+//            return true
+//        } else {
+//            return false
+//        }
+//    }
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        view.backgroundColor = UIColor(red: 255/255, green: 242/255, blue: 242/255, alpha: 1.0)
@@ -64,9 +90,13 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
         
 //        collectionTableGenerate.minimumInteritemSpacing = 0
 //        collectionTableGenerate.minimumLineSpacing = 0
-//        collectionTableGenerate.register(UINib.init(nibName: GenerateCellID, bundle: nil), forCellWithReuseIdentifier: GenerateCellID)
+        collectionTableGenerate.register(UINib.init(nibName: GenerateCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: GenerateCollectionViewCell)
 //        view.backgroundColor = UIColor.orange
-
+//        tabBarController?.tabBar.
+//        UITabBar.appearance().layer.borderWidth = 0.0
+//        UITabBar.appearance().clipsToBounds = true
+//        self.tabBarItem.setValue(true, forKey: "_hidesShadow")
+//        self.tabBarItem.setValue(true, forKey: "_hidesShadow")
     }
     
 //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -88,7 +118,7 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GenerateCellID, for: indexPath) as? GenerateCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GenerateCollectionViewCell, for: indexPath) as? GenerateCollectionViewCell
         cell?.lblCellName.text = arrayFunctionCell[indexPath.row]
         cell?.imgViewGenerate.image = UIImage(named: "qrcode")
         cell?.backgroundColor = UIColor(white: 1, alpha: 0)
@@ -120,6 +150,10 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
     func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        self.performSegue(withIdentifier: "segueGenerateToGenText", sender: 1)
     }
     
 //    func saveImage(image: UIImage) -> Bool {
