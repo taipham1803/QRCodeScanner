@@ -14,7 +14,6 @@
 		C77199CA22FC221F00831665 /* ConstantManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77199C922FC221F00831665 /* ConstantManager.swift */; };
 		C77199CC22FC2AEE00831665 /* Public.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77199CB22FC2AEE00831665 /* Public.swift */; };
 		C77199D022FC9FDC00831665 /* HomeTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77199CF22FC9FDC00831665 /* HomeTabBarViewController.swift */; };
-		C77199D422FCA48F00831665 /* GenerateTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77199D322FCA48F00831665 /* GenerateTextViewController.swift */; };
 		C7A6CCED22E0145600B9A9DD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A6CCEC22E0145600B9A9DD /* AppDelegate.swift */; };
 		C7A6CCEF22E0145600B9A9DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A6CCEE22E0145600B9A9DD /* ViewController.swift */; };
 		C7A6CCF222E0145600B9A9DD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7A6CCF022E0145600B9A9DD /* Main.storyboard */; };
@@ -32,6 +31,12 @@
 		C7F28D4D22EF453100FD17C5 /* ModalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7F28D4B22EF453100FD17C5 /* ModalViewController.xib */; };
 		C7F4835822F2DF9500EEA8E0 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */; };
 		C7F4835922F2DF9500EEA8E0 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */; };
+		C7FA62032302B4A20049F13D /* GenerateEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA62022302B4A20049F13D /* GenerateEmailViewController.swift */; };
+		C7FA62052302B4CA0049F13D /* GenerateTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA62042302B4CA0049F13D /* GenerateTextViewController.swift */; };
+		C7FA62082302B5D00049F13D /* GenerateLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA62072302B5D00049F13D /* GenerateLocationViewController.swift */; };
+		C7FA620E2302CFE50049F13D /* GenerateContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA620D2302CFE50049F13D /* GenerateContactViewController.swift */; };
+		C7FA62102302CFFA0049F13D /* GenerateSMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA620F2302CFFA0049F13D /* GenerateSMSViewController.swift */; };
+		C7FA62122302D00C0049F13D /* GenerateWifiViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA62112302D00C0049F13D /* GenerateWifiViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +48,6 @@
 		C77199C922FC221F00831665 /* ConstantManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstantManager.swift; sourceTree = "<group>"; };
 		C77199CB22FC2AEE00831665 /* Public.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Public.swift; sourceTree = "<group>"; };
 		C77199CF22FC9FDC00831665 /* HomeTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabBarViewController.swift; sourceTree = "<group>"; };
-		C77199D322FCA48F00831665 /* GenerateTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateTextViewController.swift; sourceTree = "<group>"; };
 		C7A6CCE922E0145600B9A9DD /* QR Code Scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "QR Code Scanner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7A6CCEC22E0145600B9A9DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C7A6CCEE22E0145600B9A9DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -63,6 +67,12 @@
 		C7F28D4B22EF453100FD17C5 /* ModalViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ModalViewController.xib; sourceTree = "<group>"; };
 		C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HistoryTableViewCell.xib; sourceTree = "<group>"; };
+		C7FA62022302B4A20049F13D /* GenerateEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateEmailViewController.swift; sourceTree = "<group>"; };
+		C7FA62042302B4CA0049F13D /* GenerateTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateTextViewController.swift; sourceTree = "<group>"; };
+		C7FA62072302B5D00049F13D /* GenerateLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateLocationViewController.swift; sourceTree = "<group>"; };
+		C7FA620D2302CFE50049F13D /* GenerateContactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateContactViewController.swift; sourceTree = "<group>"; };
+		C7FA620F2302CFFA0049F13D /* GenerateSMSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateSMSViewController.swift; sourceTree = "<group>"; };
+		C7FA62112302D00C0049F13D /* GenerateWifiViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateWifiViewController.swift; sourceTree = "<group>"; };
 		EA0C01369375ED0DFB4E0022 /* Pods_QR_Code_Scanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QR_Code_Scanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -117,7 +127,7 @@
 		C77199C622FC0DA000831665 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				C77199C722FC0DB500831665 /* ScanModel.swift */,
+				C7FA62092302C8DE0049F13D /* Model */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -125,7 +135,7 @@
 		C77199D222FCA46200831665 /* GenerateTextView */ = {
 			isa = PBXGroup;
 			children = (
-				C77199D322FCA48F00831665 /* GenerateTextViewController.swift */,
+				C7FA62042302B4CA0049F13D /* GenerateTextViewController.swift */,
 			);
 			path = GenerateTextView;
 			sourceTree = "<group>";
@@ -165,6 +175,11 @@
 		C7AD111822E16BBC00DB58FD /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				C7FA620C2302CFC10049F13D /* GenerateWifiView */,
+				C7FA620B2302CFB80049F13D /* GenerateSMSView */,
+				C7FA620A2302CFAA0049F13D /* GenerateContactView */,
+				C7FA62062302B5AE0049F13D /* GenerateLocationView */,
+				C7FA62012302B4420049F13D /* GenerateEmailView */,
 				C77199D222FCA46200831665 /* GenerateTextView */,
 				C72D5E9722E2C85F005109E3 /* HistoryView */,
 				C7AD112122E1C2E600DB58FD /* ContentCodeView */,
@@ -247,6 +262,54 @@
 				C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		C7FA62012302B4420049F13D /* GenerateEmailView */ = {
+			isa = PBXGroup;
+			children = (
+				C7FA62022302B4A20049F13D /* GenerateEmailViewController.swift */,
+			);
+			path = GenerateEmailView;
+			sourceTree = "<group>";
+		};
+		C7FA62062302B5AE0049F13D /* GenerateLocationView */ = {
+			isa = PBXGroup;
+			children = (
+				C7FA62072302B5D00049F13D /* GenerateLocationViewController.swift */,
+			);
+			path = GenerateLocationView;
+			sourceTree = "<group>";
+		};
+		C7FA62092302C8DE0049F13D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C77199C722FC0DB500831665 /* ScanModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		C7FA620A2302CFAA0049F13D /* GenerateContactView */ = {
+			isa = PBXGroup;
+			children = (
+				C7FA620D2302CFE50049F13D /* GenerateContactViewController.swift */,
+			);
+			path = GenerateContactView;
+			sourceTree = "<group>";
+		};
+		C7FA620B2302CFB80049F13D /* GenerateSMSView */ = {
+			isa = PBXGroup;
+			children = (
+				C7FA620F2302CFFA0049F13D /* GenerateSMSViewController.swift */,
+			);
+			path = GenerateSMSView;
+			sourceTree = "<group>";
+		};
+		C7FA620C2302CFC10049F13D /* GenerateWifiView */ = {
+			isa = PBXGroup;
+			children = (
+				C7FA62112302D00C0049F13D /* GenerateWifiViewController.swift */,
+			);
+			path = GenerateWifiView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -371,17 +434,22 @@
 				C77199C822FC0DB500831665 /* ScanModel.swift in Sources */,
 				C7F28D4C22EF453100FD17C5 /* ModalViewController.swift in Sources */,
 				C77199CC22FC2AEE00831665 /* Public.swift in Sources */,
-				C77199D422FCA48F00831665 /* GenerateTextViewController.swift in Sources */,
 				C7AD111F22E170B600DB58FD /* GenerateCodeViewController.swift in Sources */,
 				C7F24B5122F840C00055F43B /* GenerateCollectionViewCell.swift in Sources */,
 				C7A6CCF522E0145600B9A9DD /* QR_Code_Scanner.xcdatamodeld in Sources */,
+				C7FA62122302D00C0049F13D /* GenerateWifiViewController.swift in Sources */,
 				C77199C522FC0D8800831665 /* ScanManager.swift in Sources */,
 				C7A6CCEF22E0145600B9A9DD /* ViewController.swift in Sources */,
+				C7FA62082302B5D00049F13D /* GenerateLocationViewController.swift in Sources */,
+				C7FA62102302CFFA0049F13D /* GenerateSMSViewController.swift in Sources */,
 				C7AD111D22E170A800DB58FD /* ScanCodeViewController.swift in Sources */,
+				C7FA62032302B4A20049F13D /* GenerateEmailViewController.swift in Sources */,
 				C7ED072722F04A01008EF53C /* OptionTableViewCell.swift in Sources */,
+				C7FA620E2302CFE50049F13D /* GenerateContactViewController.swift in Sources */,
 				C7AD112322E1C2F800DB58FD /* ContentViewController.swift in Sources */,
 				C7F4835822F2DF9500EEA8E0 /* HistoryTableViewCell.swift in Sources */,
 				C72D5E9922E2C888005109E3 /* HistoryViewController.swift in Sources */,
+				C7FA62052302B4CA0049F13D /* GenerateTextViewController.swift in Sources */,
 				C77199D022FC9FDC00831665 /* HomeTabBarViewController.swift in Sources */,
 				C7A6CCED22E0145600B9A9DD /* AppDelegate.swift in Sources */,
 				C77199CA22FC221F00831665 /* ConstantManager.swift in Sources */,

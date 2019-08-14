@@ -28,6 +28,19 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
         "Event information"
     ]
     
+    let arrayGenerateType:[Scan] = [
+        Scan(id: 1, content: "Website", type: "text"),
+        Scan(id: 2, content: "Contact", type: "contact"),
+        Scan(id: 3, content: "Plain text", type: "text"),
+        Scan(id: 4, content: "Phone number", type: "text"),
+        Scan(id: 5, content: "Email", type: "email"),
+        Scan(id: 6, content: "Link URL", type: "text"),
+        Scan(id: 7, content: "Location", type: "location"),
+        Scan(id: 8, content: "Event information", type: "event"),
+        Scan(id: 9, content: "SMS", type: "sms"),
+        Scan(id: 10, content: "Wifi", type: "wifi")
+    ]
+    
     
     @IBAction func btnGenerateCode(_ sender: Any) {
         textFieldInput.resignFirstResponder()
@@ -114,12 +127,12 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
 //    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 8
+        return arrayGenerateType.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GenerateCollectionViewCell, for: indexPath) as? GenerateCollectionViewCell
-        cell?.lblCellName.text = arrayFunctionCell[indexPath.row]
+        cell?.lblCellName.text = arrayGenerateType[indexPath.row].content
         cell?.imgViewGenerate.image = UIImage(named: "qrcode")
         cell?.backgroundColor = UIColor(white: 1, alpha: 0)
         return cell ?? UICollectionViewCell()
@@ -153,7 +166,21 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        self.performSegue(withIdentifier: "segueGenerateToGenText", sender: 1)
+        
+        if(arrayGenerateType[indexPath.row].type == "text"){
+            self.performSegue(withIdentifier: "segueGenerateToText", sender: 1)
+        } else if(arrayGenerateType[indexPath.row].type == "email"){
+            self.performSegue(withIdentifier: "segueGenerateToMail", sender: 1)
+        } else if(arrayGenerateType[indexPath.row].type == "location"){
+            self.performSegue(withIdentifier: "segueGenerateToLocation", sender: 1)
+        } else if(arrayGenerateType[indexPath.row].type == "contact"){
+            self.performSegue(withIdentifier: "segueGenerateToContact", sender: 1)
+        } else if(arrayGenerateType[indexPath.row].type == "sms"){
+            self.performSegue(withIdentifier: "segueGenerateToSMS", sender: 1)
+        } else if(arrayGenerateType[indexPath.row].type == "wifi"){
+            self.performSegue(withIdentifier: "segueGenerateToWifi", sender: 1)
+        } 
+        
     }
     
 //    func saveImage(image: UIImage) -> Bool {
@@ -183,15 +210,20 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
         return true
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBAction func backToGenerateViewController(segue:UIStoryboardSegue){
+        print("press cancel to back Generate view")
     }
-    */
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case "segueGenerateToText":
+            print("destination : ", segue.destination)
+            if let vc = segue.destination as? GenerateTextViewController {
+
+            }
+        default:
+            break
+        }
+    }
 
 }

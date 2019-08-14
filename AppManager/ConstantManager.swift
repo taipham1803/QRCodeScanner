@@ -16,18 +16,8 @@ enum ConstantManager {
     }
     
     enum Segue: String {
-        case splashToHome = "SplashToMainTab"
-        case splashToLogin = "SplashToLogin"
-        case loginToPassword = "loginToPassword"
-        case loginToVerify = "loginToVerify"
-        case passwordToVerify = "passwordToVerify"
-        case homeToBooking = "homeToBooking"
-        case homeToQR = "homeToQR"
-        case homeToCoupon = "homeToCoupon"
-        case bookingStoreToTime = "bookingStoreToTime"
-        case bookingTimeToConfirm = "bookingTimeToConfirm"
-        case moreToHistory = "moreToHistory"
-        case moreToCombo = "moreToCombo"
+        case segueGenerateToText = "segueGenerateToText"
+
     }
     
     enum RegexValidate: String {

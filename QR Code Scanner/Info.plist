@@ -51,5 +51,10 @@
 	<string>Give me Photo Usage permission</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Give me microphone permission</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This application requires location services to work</string>
+
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>This application requires location services to work</string>
 </dict>
 </plist>

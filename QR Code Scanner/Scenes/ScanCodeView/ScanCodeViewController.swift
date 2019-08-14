@@ -74,6 +74,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     @IBOutlet weak var lblShowContentCode: UILabel!
     @IBOutlet weak var lblTypeDetected: UILabel!
     
+    private var boundingBox = CAShapeLayer()
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var imgView: UIImageView = UIImageView()
@@ -210,6 +211,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         buildModalView()
         buildViewGroupTop()
         autoCapture()
+        setupBoundingBox()
 //        let popup = PopupDialog(title: titleModal, message: message, image: image)
 //        popup.addButtons([buttonOne, buttonTwo, buttonThree])
 //        self.present(popup, animated: true, completion: nil)
@@ -309,7 +311,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         
         if (captureSession.canAddOutput(metadataOutput)) {
             captureSession.addOutput(metadataOutput)
-            
             metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metadataOutput.metadataObjectTypes = [.qr]
         } else {
@@ -327,6 +328,51 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         view.addSubview(viewGroupTop)
         captureSession.startRunning()
     }
+    
+    
+    private func setupBoundingBox() {
+        boundingBox.frame = view.layer.bounds
+        boundingBox.frame =  CGRect(x: 0 , y: 20, width: self.view.frame.width, height: self.view.frame.height)
+        boundingBox.strokeColor = UIColor.red.cgColor
+        boundingBox.lineWidth = 4.0
+        boundingBox.fillColor = UIColor.clear.cgColor
+        
+        view.layer.addSublayer(boundingBox)
+    }
+    
+    fileprivate func updateBoundingBox(_ points: [CGPoint]) {
+        guard let firstPoint = points.first else {
+            return
+        }
+        
+        let path = UIBezierPath()
+        path.move(to: firstPoint)
+        
+        var newPoints = points
+        newPoints.removeFirst()
+//        firstPoint.x = firstPoint.x + 100
+        newPoints.append(firstPoint)
+        
+        newPoints.forEach { path.addLine(to: $0) }
+        
+        boundingBox.path = path.cgPath
+        boundingBox.isHidden = false
+    }
+    
+    private var resetTimer: Timer?
+    fileprivate func hideBoundingBox(after: Double) {
+        resetTimer?.invalidate()
+        resetTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval() + after,
+                                          repeats: false) {
+                                            [weak self] (timer) in
+                                            self?.resetViews() }
+    }
+    
+    private func resetViews() {
+        boundingBox.isHidden = true
+//        resultsLabel.text = nil
+    }
+
    
     
     func checkContentFromCode(content: String){
@@ -517,6 +563,15 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
                 AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
                 found(code: stringValue)
             }
+            
+            guard let transformedObject = previewLayer.transformedMetadataObject(for: metadataObject) as? AVMetadataMachineReadableCodeObject else {
+                return
+            }
+
+            
+            updateBoundingBox(transformedObject.corners)
+            hideBoundingBox(after: 0.25)
+
         }
         
         dismiss(animated: true)
