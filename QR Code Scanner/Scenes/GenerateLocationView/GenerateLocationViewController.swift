@@ -13,8 +13,17 @@ import CoreLocation
 class GenerateLocationViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var textFieldSearch: UITextField!
+    
+    
+    
+    
     
     let locationManager = CLLocationManager()
+    
+    @IBAction func btnGenerate(_ sender: Any) {
+        self.performSegue(withIdentifier: "segueLocationToQRcode", sender: 1)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

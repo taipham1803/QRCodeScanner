@@ -8,21 +8,43 @@
 
 import UIKit
 
-class GenerateTextViewController: UIViewController {
+class GenerateTextViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var btnGenerate: UIButton!
+    @IBOutlet weak var textField: UITextField!
     
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//
-//        // Do any additional setup after loading the view.
-//    }
+    var content:String = ""
+    
+    @IBAction func btnGenerate(_ sender: Any) {
+        saveText()
+        self.performSegue(withIdentifier: "segueTextToQRcode", sender: 1)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        NotificationCenter.default.addObserver(self, selector: #selector(GenerateTextViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(GenerateTextViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        textField.delegate = self
     }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        content = textField.text!
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        content = textField.text!
+    }
+    
+    func saveText(){
+        ScanManager.shared.setTypeContentText()
+        ScanManager.shared.setContentGenerate(content: content)
+    }
+    
+    
     
 //    @objc func keyboardWillShow(notification: NSNotification) {
 //        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {

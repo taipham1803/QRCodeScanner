@@ -8,23 +8,69 @@
 
 import UIKit
 
-class GenerateContactViewController: UIViewController {
+class GenerateContactViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
+    
+    @IBOutlet weak var textFieldFirstName: UITextField!
+    @IBOutlet weak var textFieldLastName: UITextField!
+    @IBOutlet weak var textFieldCompany: UITextField!
+    @IBOutlet weak var textFieldPhoneNumber: UITextField!
+    @IBOutlet weak var textViewNote: UITextView!
+    var firstName: String = ""
+    var lastName: String = ""
+    var company: String = ""
+    var phoneNumber: String = ""
+    var note: String = ""
+    
+    @IBAction func btnGenerate(_ sender: Any) {
+        saveContact()
+        self.performSegue(withIdentifier: "segueContactToQRcode", sender: 1)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupDelegate()
+    }
 
-        // Do any additional setup after loading the view.
+    func setupDelegate(){
+        textFieldFirstName.delegate = self
+        textFieldLastName.delegate = self
+        textFieldCompany.delegate = self
+        textFieldPhoneNumber.delegate = self
+        textViewNote.delegate = self
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func saveContact(){
+        print("Check save email: ", Contact.init(firstName: firstName, lastName: lastName, company: company, phoneNumber: phoneNumber, note: note) as Any)
+        ScanManager.shared.setTypeContentContact()
+        ScanManager.shared.setContentGenerateContact(contact: Contact.init(firstName: firstName, lastName: lastName, company: company, phoneNumber: phoneNumber, note: note))
     }
-    */
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if(textField == textFieldFirstName){
+            firstName = textField.text!
+        } else if (textField == textFieldLastName){
+            lastName = textField.text!
+        }  else if (textField == textFieldCompany){
+            company = textField.text!
+        }  else if (textField == textFieldPhoneNumber){
+            phoneNumber = textField.text!
+        }
+        return true
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if(textView == textViewNote){
+            note = textView.text
+        }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        note = textView.text!
+    }
 
 }

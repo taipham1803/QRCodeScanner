@@ -8,14 +8,52 @@
 
 import UIKit
 
-class GenerateWifiViewController: UIViewController {
+class GenerateWifiViewController: UIViewController, UITextFieldDelegate {
 
+    @IBOutlet weak var textFieldWifiName: UITextField!
+    @IBOutlet weak var textFieldPassword: UITextField!
+    @IBOutlet weak var textFieldEncry: UITextField!
+    var name: String = ""
+    var password: String = ""
+    var encryption: String = ""
+    
+    @IBAction func btnGenerate(_ sender: Any) {
+        saveWifi()
+        self.performSegue(withIdentifier: "segueWifiToQRcode", sender: 1)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setupDelegate()
         // Do any additional setup after loading the view.
     }
     
+    func setupDelegate(){
+        textFieldWifiName.delegate = self
+        textFieldPassword.delegate = self
+        textFieldEncry.delegate = self
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if(textField == textFieldWifiName){
+            name = textField.text!
+        } else if (textField == textFieldPassword){
+            password = textField.text!
+        }  else if (textField == textFieldEncry){
+            encryption = textField.text!
+        }
+        return true
+    }
+    
+    func saveWifi(){
+        ScanManager.shared.setTypeContentWifi()
+        ScanManager.shared.setContentGenerateWifi(wifi: Wifi.init(name: name, password: password, encryption: encryption))
+    }
 
     /*
     // MARK: - Navigation

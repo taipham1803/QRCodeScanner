@@ -17,12 +17,101 @@ class ScanManager {
     private init() {}
     
     var status: Status = .scan
+    fileprivate(set) var typeContent: TypeContent = .text
     fileprivate(set) var historyScan: [Scan] = []
-    
+    fileprivate(set) var contentGenerate: String?
+    fileprivate(set) var contentGenerateEmail: Email?
+    fileprivate(set) var contentGenerateSMS: SMS?
+    fileprivate(set) var contentGenerateContact: Contact?
+    fileprivate(set) var contentGenerateEvent: Event?
+    fileprivate(set) var contentGenerateWifi: Wifi?
+    fileprivate(set) var contentGenerateLocation: Location?
+
     enum Status {
         case scan
         case generate
         case history
+    }
+    
+    enum TypeContent {
+        case text
+        case email
+        case contact
+        case location
+        case event
+        case sms
+        case wifi
+        case phoneNumber
+        case website
+        case url
+    }
+    
+    func setTypeContentText(){
+        self.typeContent = .text
+    }
+    
+    func setTypeContentEmail(){
+        self.typeContent = .email
+    }
+    
+    func setTypeContentContact(){
+        self.typeContent = .contact
+    }
+    
+    func setTypeContentLocation(){
+        self.typeContent = .location
+    }
+    
+    func setTypeContentEvent(){
+        self.typeContent = .event
+    }
+    
+    func setTypeContentSMS(){
+        self.typeContent = .sms
+    }
+    
+    func setTypeContentWifi(){
+        self.typeContent = .wifi
+    }
+    
+    func setTypeContentPhoneNumber(){
+        self.typeContent = .phoneNumber
+    }
+    
+    func setTypeContentWebsite(){
+        self.typeContent = .website
+    }
+    
+    func setTypeContentUrl(){
+        self.typeContent = .url
+    }
+    
+    func setContentGenerate(content: String){
+        self.contentGenerate = content
+    }
+    
+    func setContentGenerateEmail(email: Email){
+        self.contentGenerateEmail = email
+    }
+    
+    func setContentGenerateSMS(sms: SMS){
+        self.contentGenerateSMS = sms
+    }
+    
+    func setContentGenerateContact(contact: Contact){
+        self.contentGenerateContact = contact
+    }
+    
+    func setContentGenerateEvent(event: Event){
+        self.contentGenerateEvent = event
+    }
+    
+    func setContentGenerateLocation(location: Location){
+        self.contentGenerateLocation = location
+    }
+    
+    func setContentGenerateWifi(wifi: Wifi){
+        self.contentGenerateWifi = wifi
     }
     
     func saveNewScanResult(scan: Scan){
@@ -92,5 +181,28 @@ class ScanManager {
             print("Torch is not available")
         }
     }
+    
+    func generateQRCode(from string: String) -> UIImage? {
+        let data = string.data(using: String.Encoding.ascii)
+        
+        if let filter = CIFilter(name: "CIQRCodeGenerator") {
+            filter.setValue(data, forKey: "inputMessage")
+            let transform = CGAffineTransform(scaleX: 10, y: 10)
+            
+            if let output = filter.outputImage?.transformed(by: transform) {
+                return UIImage(ciImage: output)
+            }
+        }
+        return nil
+    }
+    
+//    func showAlert(content: String, title1: String, title2: String){
+//        let alert = UIAlertController(title: content, message: "", preferredStyle: .alert)
+//        alert.addAction(UIAlertAction(title: title1, style: .default, handler: { action in
+//            
+//        }))
+//        alert.addAction(UIAlertAction(title: title2, style: .cancel, handler: nil))
+//        self.present(alert, animated: true)
+//    }
     
 }

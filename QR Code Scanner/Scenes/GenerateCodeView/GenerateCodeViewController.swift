@@ -17,17 +17,6 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
     var stringInput:String = ""
     let GenerateCollectionViewCell = "GenerateCollectionViewCell"
     
-    let arrayFunctionCell:[String] = [
-        "Website",
-        "Contact",
-        "Plain text",
-        "Phone number",
-        "Email",
-        "Link URL",
-        "Location",
-        "Event information"
-    ]
-    
     let arrayGenerateType:[Scan] = [
         Scan(id: 1, content: "Website", type: "text"),
         Scan(id: 2, content: "Contact", type: "contact"),
@@ -64,32 +53,6 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
     @IBAction func btnShareQRCode(_ sender: Any) {
         
     }
-    
-//    func validateName(name: String) -> Bool{
-//        if(name.count>3){
-//            return true
-//        } else {
-//            return false
-//        }
-//    }
-//
-//    func validateEmail(email: String) -> Bool{
-//        if(email.count>6){
-//            return true
-//        } else {
-//            return false
-//        }
-//    }
-//
-//    func validatePhone(phone: String) -> Bool{
-//        if(phone.count>6){
-//            return true
-//        } else {
-//            return false
-//        }
-//    }
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
