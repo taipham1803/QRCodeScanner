@@ -10,6 +10,7 @@ import UIKit
 import AVFoundation
 import MessageUI
 import PopupDialog
+import CoreData
 
 @nonobjc extension UIViewController {
     func add(_ child: UIViewController, frame: CGRect? = nil) {
@@ -39,33 +40,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
 
     @IBOutlet weak var modalBottomContent: UIView!
-    //    var cameraCheck = CameraType.Back
-//    
-//    func addVideoInput() {
-//        if cameraCheck ==  CameraType.Front  {
-//            cameraCheck = CameraType.Back
-//            let device: AVCaptureDevice = self.deviceWithMediaTypeWithPosition(AVMediaTypeVideo, position: AVCaptureDevice.Position.Front)
-//            do {
-//                let input = try AVCaptureDeviceInput(device: device)
-//                if self.captureSession.canAddInput(input) {
-//                    self.captureSession.addInput(input)
-//                }
-//            } catch {
-//                print(error)
-//            }
-//        }else{
-//            cameraCheck = CameraType.Front
-//            let device: AVCaptureDevice = self.deviceWithMediaTypeWithPosition(AVMediaTypeVideo, position: AVCaptureDevice.Position.Back)
-//            do {
-//                let input = try AVCaptureDeviceInput(device: device)
-//                if self.captureSession.canAddInput(input) {
-//                    self.captureSession.addInput(input)
-//                }
-//            } catch {
-//                print(error)
-//            }
-//        }
-//    }
+
 
     @IBOutlet var modalView: UIView!
     @IBOutlet weak var viewGroupTop: UIView!

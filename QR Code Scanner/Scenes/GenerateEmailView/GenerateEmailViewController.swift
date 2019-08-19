@@ -57,7 +57,6 @@ class GenerateEmailViewController: UIViewController, UITextFieldDelegate, UIText
     }
     
     func saveEmail(){
-        ScanManager.shared.setTypeContentEmail()
         ScanManager.shared.setContentGenerateEmail(email: Email.init(yourEmail: yourEmail, subject: subject, message: message))
     }
     

@@ -131,16 +131,22 @@ class GenerateCodeViewController: UIViewController, UITextFieldDelegate, UIColle
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if(arrayGenerateType[indexPath.row].type == "text"){
+            ScanManager.shared.setTypeContentText()
             self.performSegue(withIdentifier: "segueGenerateToText", sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "email"){
+            ScanManager.shared.setTypeContentEmail()
             self.performSegue(withIdentifier: "segueGenerateToMail", sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "location"){
+            ScanManager.shared.setTypeContentLocation()
             self.performSegue(withIdentifier: "segueGenerateToLocation", sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "contact"){
+            ScanManager.shared.setTypeContentContact()
             self.performSegue(withIdentifier: "segueGenerateToContact", sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "sms"){
+            ScanManager.shared.setTypeContentSMS()
             self.performSegue(withIdentifier: "segueGenerateToSMS", sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "wifi"){
+            ScanManager.shared.setTypeContentWifi()
             self.performSegue(withIdentifier: "segueGenerateToWifi", sender: 1)
         } 
         

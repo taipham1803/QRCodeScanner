@@ -40,8 +40,6 @@ class GenerateContactViewController: UIViewController, UITextFieldDelegate, UITe
     }
     
     func saveContact(){
-        print("Check save email: ", Contact.init(firstName: firstName, lastName: lastName, company: company, phoneNumber: phoneNumber, note: note) as Any)
-        ScanManager.shared.setTypeContentContact()
         ScanManager.shared.setContentGenerateContact(contact: Contact.init(firstName: firstName, lastName: lastName, company: company, phoneNumber: phoneNumber, note: note))
     }
     

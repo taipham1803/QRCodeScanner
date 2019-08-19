@@ -16,13 +16,8 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     let pasteboard = UIPasteboard.general
     let historyCellID = "HistoryTableViewCell"
     
-//    let arrayResultScan:[Scan] = [
-//        Scan(id: 1, content: "0869898203", type: "Phone Number"),
-//        Scan(id: 2, content: "https://emddi.com", type: "Web"),
-//        Scan(id: 3, content: "taipham1803@gmail.com", type: "Gmail"),
-//        Scan(id: 4, content: "https://www.youtube.com/watch?v=TMsuP-QCEro", type: "Youtube"),
-//        Scan(id: 5, content: "https://www.facebook.com/cu0ngkimgiang", type: "Facebook")
-//    ]
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var items: [EntityScan] = []
     
     let arrayResultScan:[Scan] = ScanManager.shared.historyScan
     override func viewDidLoad() {
@@ -37,21 +32,27 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        fetchData()
         self.tableViewHistory.reloadData()
         if(ScanManager.shared.historyScan.count>0){
             print("Check count array history: ", ScanManager.shared.historyScan.count)
             lblNoHistory.text = ""
         }
     }
+
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ScanManager.shared.historyScan.count
+//        return ScanManager.shared.historyScan.count
+        return items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: historyCellID) as? HistoryTableViewCell
-        cell?.lblTitle.text = ScanManager.shared.historyScan[indexPath.row].type
-        cell?.lblBody.text = ScanManager.shared.historyScan[indexPath.row].content
+//        cell?.lblTitle.text = ScanManager.shared.historyScan[indexPath.row].type
+//        cell?.lblBody.text = ScanManager.shared.historyScan[indexPath.row].content
+        
+        cell?.lblTitle.text = items[indexPath.row].type
+        cell?.lblBody.text = items[indexPath.row].content
 //        cell?.layer.cornerRadius = 25
         cell?.backgroundColor = UIColor(white: 1, alpha: 0)
         return cell ?? UITableViewCell()
@@ -60,6 +61,20 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Tap on tableView in ", indexPath.row)
         showActionSheetButtonTapped()
+        
+    }
+    
+    func fetchData() {
+        
+        do {
+            items = try context.fetch(EntityScan.fetchRequest())
+            print(items)
+            DispatchQueue.main.async {
+                self.tableViewHistory.reloadData()
+            }
+        } catch {
+            print("Couldn't Fetch Data")
+        }
         
     }
     

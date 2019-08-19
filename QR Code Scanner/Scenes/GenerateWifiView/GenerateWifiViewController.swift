@@ -51,7 +51,6 @@ class GenerateWifiViewController: UIViewController, UITextFieldDelegate {
     }
     
     func saveWifi(){
-        ScanManager.shared.setTypeContentWifi()
         ScanManager.shared.setContentGenerateWifi(wifi: Wifi.init(name: name, password: password, encryption: encryption))
     }
 

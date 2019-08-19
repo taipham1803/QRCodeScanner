@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import AVFoundation
+import CoreData
 
 class ScanManager {
     
@@ -118,8 +119,22 @@ class ScanManager {
         if self.historyScan.contains(where: { $0.content == scan.content }) == false {
             self.historyScan.append(scan)
         }
-//        self.historyScan.append(scan)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "EntityScan", in: context)
+        let newUser = NSManagedObject(entity: entity!, insertInto: context)
+        newUser.setValue(scan.content, forKey: "content")
+        newUser.setValue(scan.type, forKey: "type")
+        newUser.setValue(scan.id, forKey: "id")
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed saving")
+        }
     }
+    
+    
     
     func displayToastMessage(_ message : String) {
         

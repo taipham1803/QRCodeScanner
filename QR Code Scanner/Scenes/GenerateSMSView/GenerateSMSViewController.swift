@@ -52,7 +52,6 @@ class GenerateSMSViewController: UIViewController, UITextViewDelegate, UITextFie
     }
     
     func saveSMS(){
-        ScanManager.shared.setTypeContentSMS()
         ScanManager.shared.setContentGenerateSMS(sms: SMS.init(yourPhone: yourPhone, message: message))
     }
     

@@ -40,7 +40,7 @@ class GenerateTextViewController: UIViewController, UITextFieldDelegate {
     }
     
     func saveText(){
-        ScanManager.shared.setTypeContentText()
+//        ScanManager.shared.setTypeContentText()
         ScanManager.shared.setContentGenerate(content: content)
     }
     
