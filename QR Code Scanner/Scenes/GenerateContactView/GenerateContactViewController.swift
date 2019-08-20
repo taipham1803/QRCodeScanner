@@ -61,6 +61,14 @@ class GenerateContactViewController: UIViewController, UITextFieldDelegate, UITe
         return true
     }
     
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if (text == "\n") {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         if(textView == textViewNote){
             note = textView.text

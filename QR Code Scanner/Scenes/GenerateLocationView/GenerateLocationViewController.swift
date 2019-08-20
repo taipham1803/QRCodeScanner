@@ -15,10 +15,6 @@ class GenerateLocationViewController: UIViewController, CLLocationManagerDelegat
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var textFieldSearch: UITextField!
     
-    
-    
-    
-    
     let locationManager = CLLocationManager()
     
     @IBAction func btnGenerate(_ sender: Any) {

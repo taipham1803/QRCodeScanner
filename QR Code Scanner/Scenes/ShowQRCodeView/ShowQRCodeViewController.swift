@@ -21,24 +21,84 @@ class ShowQRCodeViewController: UIViewController {
     @IBOutlet weak var lblQRCodeType: UILabel!
     @IBOutlet weak var lblContent: UILabel!
     
+    @IBOutlet weak var imgCheckQR: UIImageView!
+    
     var contentToGenerate: String = ""
+    var imgQR = UIImage()
     
     @IBAction func dismissVC(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
-    @IBAction func btnSave(_ sender: Any) {
+    
+    @IBAction func btnSave(_ sender: Any){
+        if (saveImage(image: imgQR)){
+            print("Save image success!")
+        } else {
+            print("Save image fail!")
+        }
+        imgCheckQR.image = imgQR
+        if let message = storeImageToDocumentDirectory(image: imgQR, fileName: "QRCode"){
+            print(message)
+        }
     }
     
     @IBAction func btnShare(_ sender: Any) {
+//        shareContent(text: contentToGenerate)
+        shareImage(image: ScanManager.shared.generateQRCode(from: contentToGenerate)!)
+//        shareImagePro()
+        
+//        let img: UIImage = imgQR
+//        let shareItems:Array = [img]
+//        let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+//        activityViewController.excludedActivityTypes = [UIActivityType.print, UIActivityType.postToWeibo, UIActivityType.copyToPasteboard, UIActivityType.addToReadingList, UIActivityType.postToVimeo]
+//        self.present(activityViewController, animated: true, completion: nil)
     }
+    
+    func shareImagePro() {
+        let img = UIImage(named: "qrcode")
+        let messageStr = "qrcode"
+        let activityViewController:UIActivityViewController = UIActivityViewController(activityItems:  [img!, messageStr], applicationActivities: nil)
+        activityViewController.excludedActivityTypes = [UIActivityType.print, UIActivityType.postToWeibo, UIActivityType.copyToPasteboard, UIActivityType.addToReadingList, UIActivityType.postToVimeo]
+        self.present(activityViewController, animated: true, completion: nil)
+    }
+    
+    func shareImage(image: UIImage){
+        let imageShare = [ image ]
+        let activityViewController = UIActivityViewController(activityItems: imageShare , applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view
+        self.present(activityViewController, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         generateQRCode()
-        
+    }
+    
+    public static var documentsDirectoryURL: URL {
+        return FileManager.default.urls(for:.documentDirectory, in: .userDomainMask)[0]
+    }
+    public static func fileURLInDocumentDirectory(_ fileName: String) -> URL {
+        return self.documentsDirectoryURL.appendingPathComponent(fileName)
+    }
+    
+    func storeImageToDocumentDirectory(image: UIImage, fileName: String) -> URL? {
+        print("Run storeImageToDocumentDirectory")
+        guard let data = UIImageJPEGRepresentation(image, 0.5) else {
+            print("data nil")
+            return nil
+        }
+        let fileURL = ShowQRCodeViewController.fileURLInDocumentDirectory(fileName)
+        do {
+            try data.write(to: fileURL)
+            print("data fileURL")
+            return fileURL
+        } catch {
+            print("data catch")
+            return nil
+        }
     }
     
     func generateQRCode(){
-//        print("Check content fill: ", ScanManager.shared.contentGenerateEmail?.yourEmail as Any)
         switch ScanManager.shared.typeContent {
         case .text:
             if let text = ScanManager.shared.contentGenerate{
@@ -101,6 +161,31 @@ class ShowQRCodeViewController: UIViewController {
         }
         lblContent.text = "Content of QR Code: " + contentToGenerate
         imgViewQRCode.image = ScanManager.shared.generateQRCode(from: contentToGenerate)
+        imgQR = ScanManager.shared.generateQRCode(from: contentToGenerate)!
+    }
+    
+    func shareContent(text: String){
+        let textToShare = [ text ]
+        let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view
+        activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
+        self.present(activityViewController, animated: true, completion: nil)
+    }
+    
+    func saveImage(image: UIImage) -> Bool {
+        guard let data = UIImageJPEGRepresentation(image, 1) ?? UIImagePNGRepresentation(image) else {
+            return false
+        }
+        guard let directory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false) as NSURL else {
+            return false
+        }
+        do {
+            try data.write(to: directory.appendingPathComponent("fileName.png")!)
+            return true
+        } catch {
+            print(error.localizedDescription)
+            return false
+        }
     }
     
 }

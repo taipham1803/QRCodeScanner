@@ -36,6 +36,8 @@
 		C7F3A4AB2306B93900E1F59C /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A4AA2306B93900E1F59C /* Event.swift */; };
 		C7F3A576230A810500E1F59C /* Wifi.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A575230A810500E1F59C /* Wifi.swift */; };
 		C7F3A578230A8CB400E1F59C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A577230A8CB400E1F59C /* Location.swift */; };
+		C7F3A57B230B283500E1F59C /* GenerateEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A57A230B283500E1F59C /* GenerateEventViewController.swift */; };
+		C7F3A57D230BDBAB00E1F59C /* MasterDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A57C230BDBAB00E1F59C /* MasterDataManager.swift */; };
 		C7F4835822F2DF9500EEA8E0 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */; };
 		C7F4835922F2DF9500EEA8E0 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */; };
 		C7FA62032302B4A20049F13D /* GenerateEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA62022302B4A20049F13D /* GenerateEmailViewController.swift */; };
@@ -79,6 +81,8 @@
 		C7F3A4AA2306B93900E1F59C /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		C7F3A575230A810500E1F59C /* Wifi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wifi.swift; sourceTree = "<group>"; };
 		C7F3A577230A8CB400E1F59C /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		C7F3A57A230B283500E1F59C /* GenerateEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateEventViewController.swift; sourceTree = "<group>"; };
+		C7F3A57C230BDBAB00E1F59C /* MasterDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterDataManager.swift; sourceTree = "<group>"; };
 		C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HistoryTableViewCell.xib; sourceTree = "<group>"; };
 		C7FA62022302B4A20049F13D /* GenerateEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateEmailViewController.swift; sourceTree = "<group>"; };
@@ -134,6 +138,7 @@
 				C77199C422FC0D8800831665 /* ScanManager.swift */,
 				C77199C922FC221F00831665 /* ConstantManager.swift */,
 				C77199CB22FC2AEE00831665 /* Public.swift */,
+				C7F3A57C230BDBAB00E1F59C /* MasterDataManager.swift */,
 			);
 			path = AppManager;
 			sourceTree = "<group>";
@@ -189,6 +194,7 @@
 		C7AD111822E16BBC00DB58FD /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				C7F3A579230B280D00E1F59C /* GenerateEventView */,
 				C7F3A4A12306637900E1F59C /* ShowQRCodeView */,
 				C7FA620C2302CFC10049F13D /* GenerateWifiView */,
 				C7FA620B2302CFB80049F13D /* GenerateSMSView */,
@@ -276,6 +282,14 @@
 				C7F3A4A22306639800E1F59C /* ShowQRCodeViewController.swift */,
 			);
 			path = ShowQRCodeView;
+			sourceTree = "<group>";
+		};
+		C7F3A579230B280D00E1F59C /* GenerateEventView */ = {
+			isa = PBXGroup;
+			children = (
+				C7F3A57A230B283500E1F59C /* GenerateEventViewController.swift */,
+			);
+			path = GenerateEventView;
 			sourceTree = "<group>";
 		};
 		C7F4835522F2DF6C00EEA8E0 /* Cell */ = {
@@ -468,12 +482,14 @@
 				C7F24B5122F840C00055F43B /* GenerateCollectionViewCell.swift in Sources */,
 				C7F3A578230A8CB400E1F59C /* Location.swift in Sources */,
 				C7A6CCF522E0145600B9A9DD /* QR_Code_Scanner.xcdatamodeld in Sources */,
+				C7F3A57D230BDBAB00E1F59C /* MasterDataManager.swift in Sources */,
 				C7FA62122302D00C0049F13D /* GenerateWifiViewController.swift in Sources */,
 				C77199C522FC0D8800831665 /* ScanManager.swift in Sources */,
 				C7A6CCEF22E0145600B9A9DD /* ViewController.swift in Sources */,
 				C7F3A4AB2306B93900E1F59C /* Event.swift in Sources */,
 				C7FA62082302B5D00049F13D /* GenerateLocationViewController.swift in Sources */,
 				C7FA62102302CFFA0049F13D /* GenerateSMSViewController.swift in Sources */,
+				C7F3A57B230B283500E1F59C /* GenerateEventViewController.swift in Sources */,
 				C7F3A4A72306B74F00E1F59C /* SMS.swift in Sources */,
 				C7AD111D22E170A800DB58FD /* ScanCodeViewController.swift in Sources */,
 				C7FA62032302B4A20049F13D /* GenerateEmailViewController.swift in Sources */,

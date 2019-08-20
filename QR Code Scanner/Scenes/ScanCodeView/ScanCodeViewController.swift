@@ -41,7 +41,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
 
     @IBOutlet weak var modalBottomContent: UIView!
 
-
     @IBOutlet var modalView: UIView!
     @IBOutlet weak var viewGroupTop: UIView!
     @IBOutlet weak var lblTitle: UILabel!
@@ -61,10 +60,8 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     var typeContentDetected:String = ""
     var stringContent:String = "default"
     var typeLink: String = ""
-    let titleModal = "THIS IS THE DIALOG TITLE"
     let message = "This is the message section of the popup dialog default view"
     let image = UIImage(named: "pexels-photo-103290")
-    let arrayOptionOpen = ["Open in Youtube", "Open in Safari", "Copy this link"]
     var isOpenFlash: Bool = false
     
     let buttonOne = CancelButton(title: "CANCEL") {
@@ -100,18 +97,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     }
     
     @IBAction func btnSwitchCamera(_ sender: Any) {
-//        self.camera = nil
-//
-//        self.initializeCamera()
-//        self.establishVideoPreviewArea()
-//
-//        if isBackCamera == true {
-//            isBackCamera = false
-//            self.camera?.cameraCheck = CameraType.Front
-//        }else{
-//            isBackCamera = true
-//            self.camera?.cameraCheck = CameraType.Back
-//        }
+        switchCamera()
     }
     
     @IBAction func btnFlash(_ sender: Any) {
@@ -139,28 +125,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     }
     
     @IBAction func btnChrome(_ sender: Any) {
-//        guard let url = URL(string: stringContent) else { return }
-//        UIApplication.shared.open(url)
-        
-//        openFacebook(facebookUrl: "https://www.facebook.com/cu0ngkimgiang")
-//        openInstagram(instagramUrl: "https://www.instagram.com/quynhanhyoonaa/")
-//        playInYoutube(youtubeUrl: "https://www.youtube.com/watch?v=r0cUKpE-Nnc")
-//        let sUrl = "googlechrome://www.google.com"
-//        UIApplication.shared.openURL(NSURL(string: sUrl) as! URL)
         openOnChrome(urlSource: "https://emddi.com")
-    }
-    
-    func openOnChrome(urlSource: String){
-        var urlChrome = ""
-        if(urlSource.prefix(7).contains("http")){
-            urlChrome = urlSource.replacingOccurrences(of: "http://", with: "googlechrome://")
-        } else if (urlSource.prefix(7).contains("https")){
-            urlChrome = urlSource.replacingOccurrences(of: "https://", with: "googlechrome://")
-        } else {
-            urlChrome = "googlechrome://" + urlSource
-        }
-        guard let url = URL(string: urlChrome) else { return }
-        UIApplication.shared.open(url)
     }
     
     @IBAction func btnShare(_ sender: Any) {
@@ -187,23 +152,10 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         buildViewGroupTop()
         autoCapture()
         setupBoundingBox()
-//        let popup = PopupDialog(title: titleModal, message: message, image: image)
-//        popup.addButtons([buttonOne, buttonTwo, buttonThree])
-//        self.present(popup, animated: true, completion: nil)
-        
-//        UITabBar.appearance().shadowImage = UIImage()
-//        UITabBar.appearance().backgroundImage = UIImage()
-//        UITabBar.appearance().backgroundColor = UIColor.white
-//
-//        let tabbar = UITabBar.appearance()
-//        tabbar.shadowImage = UIImage()
-//        tabbar.isTranslucent = false
-//        tabbar.backgroundImage = UIImage()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         
     }
     
@@ -218,6 +170,19 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         modalView.layer.shadowOpacity = 1
         modalView.layer.shadowOffset = CGSize.zero
         modalView.layer.shadowRadius = 5
+    }
+    
+    func openOnChrome(urlSource: String){
+        var urlChrome = ""
+        if(urlSource.prefix(7).contains("http")){
+            urlChrome = urlSource.replacingOccurrences(of: "http://", with: "googlechrome://")
+        } else if (urlSource.prefix(7).contains("https")){
+            urlChrome = urlSource.replacingOccurrences(of: "https://", with: "googlechrome://")
+        } else {
+            urlChrome = "googlechrome://" + urlSource
+        }
+        guard let url = URL(string: urlChrome) else { return }
+        UIApplication.shared.open(url)
     }
     
     func animateIn(){
@@ -345,16 +310,10 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
     private func resetViews() {
         boundingBox.isHidden = true
-//        resultsLabel.text = nil
     }
 
-   
-    
     func checkContentFromCode(content: String){
         let contentUse = content.lowercased()
-//        if(extractPhoneNumber(content: content).count>1){
-//            typeContentDetected = "Phone Number"
-//        }
         if(contentUse.prefix(6).contains("tel:")){
             typeContentDetected = "Phone Number"
         }else if(contentUse.prefix(6).contains("wifi")){
@@ -489,6 +448,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         self.present(imagePicker, animated: true, completion: nil)
     }
     
+    
     func detectQRCode(_ image: UIImage?) -> [CIFeature]? {
         if let image = image, let ciImage = CIImage.init(image: image){
             var options: [String: Any]
@@ -503,6 +463,59 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
             let features = qrDetector?.features(in: ciImage, options: options)
             return features
         }
+        return nil
+    }
+    
+    func switchCamera() {
+        print("switchCamera")
+        if let session = captureSession {
+            //Indicate that some changes will be made to the session
+            session.beginConfiguration()
+            //Remove existing input
+            guard let currentCameraInput: AVCaptureInput = session.inputs.first else {
+                return
+            }
+            session.removeInput(currentCameraInput)
+            
+            //Get new input
+            var newCamera: AVCaptureDevice! = nil
+            if let input = currentCameraInput as? AVCaptureDeviceInput {
+                if (input.device.position == .back) {
+                    newCamera = cameraWithPosition(position: .front)
+                } else {
+                    newCamera = cameraWithPosition(position: .back)
+                }
+            }
+            
+            //Add input to session
+            var err: NSError?
+            var newVideoInput: AVCaptureDeviceInput!
+            do {
+                newVideoInput = try AVCaptureDeviceInput(device: newCamera)
+            } catch let err1 as NSError {
+                err = err1
+                newVideoInput = nil
+            }
+            
+            if newVideoInput == nil || err != nil {
+                print("Error creating capture device input: \(String(describing: err?.localizedDescription))")
+            } else {
+                session.addInput(newVideoInput)
+            }
+            
+            //Commit all the configuration changes at once
+            session.commitConfiguration()
+        }
+    }
+    
+    func cameraWithPosition(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
+        let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: AVMediaType.video, position: .unspecified)
+        for device in discoverySession.devices {
+            if device.position == position {
+                return device
+            }
+        }
+        
         return nil
     }
     

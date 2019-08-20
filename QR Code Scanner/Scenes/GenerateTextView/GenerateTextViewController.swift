@@ -12,6 +12,7 @@ class GenerateTextViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var btnGenerate: UIButton!
     @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var navigationBar: UINavigationItem!
     
     var content:String = ""
     
@@ -20,9 +21,31 @@ class GenerateTextViewController: UIViewController, UITextFieldDelegate {
         self.performSegue(withIdentifier: "segueTextToQRcode", sender: 1)
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         textField.delegate = self
+        setupTypeText()
+    }
+    
+    func setupTypeText(){
+        switch ScanManager.shared.typeContent {
+        case .phoneNumber:
+            navigationBar.title = "Phone Number"
+            textField.placeholder = "Fill phone number"
+        case .text:
+            navigationBar.title = "Text"
+            textField.placeholder = "Fill your text"
+        case .url:
+            navigationBar.title = "URL"
+            textField.placeholder = "Fill your URL"
+        case .website:
+            navigationBar.title = "Website"
+            textField.placeholder = "Fill your website"
+        default:
+            navigationBar.title = "Fill Text"
+            textField.placeholder = "Fill your text"
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

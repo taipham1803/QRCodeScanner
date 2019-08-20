@@ -17,7 +17,12 @@ enum ConstantManager {
     
     enum Segue: String {
         case segueGenerateToText = "segueGenerateToText"
-
+        case segueGenerateToMail = "segueGenerateToMail"
+        case segueGenerateToLocation = "segueGenerateToLocation"
+        case segueGenerateToContact = "segueGenerateToContact"
+        case segueGenerateToSMS = "segueGenerateToSMS"
+        case segueGenerateToWifi = "segueGenerateToWifi"
+        case segueGenerateToEvent = "segueGenerateToEvent"
     }
     
     enum RegexValidate: String {
