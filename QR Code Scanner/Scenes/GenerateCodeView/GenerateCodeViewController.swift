@@ -59,6 +59,7 @@ class GenerateCodeViewController: UIViewController, UICollectionViewDelegate, UI
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return arrayGenerateType.count
+//        return MasterDataManager.shared.arrayGenerateType.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -81,34 +82,44 @@ class GenerateCodeViewController: UIViewController, UICollectionViewDelegate, UI
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if(arrayGenerateType[indexPath.row].type == "text"){
-            ScanManager.shared.setTypeContentText()
+            let text = ""
+//            ScanManager.shared.setTypeContentText(string: text)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToText.rawValue, sender: 1)
         } else if (arrayGenerateType[indexPath.row].type == "url"){
-            ScanManager.shared.setTypeContentUrl()
+            let url = "apple.com"
+//            ScanManager.shared.setTypeContentUrl(string: url)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToText.rawValue, sender: 1)
         } else if (arrayGenerateType[indexPath.row].type == "website"){
-            ScanManager.shared.setTypeContentWebsite()
+            let website = "tinhte.vn"
+//            ScanManager.shared.setTypeContentWebsite(string: website)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToText.rawValue, sender: 1)
         } else if (arrayGenerateType[indexPath.row].type == "phoneNumber"){
-            ScanManager.shared.setTypeContentPhoneNumber()
+            let phonenumber = "0869898203"
+//            ScanManager.shared.setTypeContentPhoneNumber(string: phonenumber)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToText.rawValue, sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "email"){
-            ScanManager.shared.setTypeContentEmail()
+            let email = Email.init(yourEmail: "taipham@gmail.com", subject: "Abc", message: "Hello cac ban!")
+//            ScanManager.shared.setTypeContentEmail(email: email)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToMail.rawValue, sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "location"){
-            ScanManager.shared.setTypeContentLocation()
+            let location = Location.init(yourAddress: "Hanoi", latitude: "127.111", longitude: "5.0001")
+//            ScanManager.shared.setTypeContentLocation(location: location)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToLocation.rawValue, sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "contact"){
-            ScanManager.shared.setTypeContentContact()
+            let contact = Contact.init(firstName: "a", lastName: "b", company: "emddi", phoneNumber: "12345678", note: "hihi")
+//            ScanManager.shared.setTypeContentContact(contact: contact)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToContact.rawValue, sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "sms"){
-            ScanManager.shared.setTypeContentSMS()
+            let sms = SMS.init(yourPhone: "12345678", message: "abcd")
+//            ScanManager.shared.setTypeContentSMS(sms: sms)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToSMS.rawValue, sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "wifi"){
-            ScanManager.shared.setTypeContentWifi()
+            let wifi = Wifi.init(name: "abc", password: "abc", encryption: "WPA2")
+//            ScanManager.shared.setTypeContentWifi(wifi: wifi)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToWifi.rawValue, sender: 1)
         } else if(arrayGenerateType[indexPath.row].type == "event"){
-            ScanManager.shared.setTypeContentEvent()
+            let event = Event.init(eventTitle: "title event", eventLocation: "event'location", startTime: Date(), endTime: Date())
+//            ScanManager.shared.setTypeContentEvent(event: event)
             self.performSegue(withIdentifier: ConstantManager.Segue.segueGenerateToEvent.rawValue, sender: 1)
         }
     }

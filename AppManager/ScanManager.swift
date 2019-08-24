@@ -15,10 +15,18 @@ class ScanManager {
     
     static let shared = ScanManager()
     
-    private init() {}
+    var originText = ""
+    var detectedObject: Any?
+    var typeContentScan = ""
+    
+    private init() {
+        self.originText = ""
+        self.detectedObject = ""
+        self.typeContent = TypeContent.text("")
+    }
     
     var status: Status = .scan
-    fileprivate(set) var typeContent: TypeContent = .text
+    fileprivate(set) var typeContent: TypeContent
     fileprivate(set) var historyScan: [Scan] = []
     fileprivate(set) var contentGenerate: String?
     fileprivate(set) var contentGenerateEmail: Email?
@@ -35,56 +43,202 @@ class ScanManager {
     }
     
     enum TypeContent {
-        case text
-        case email
-        case contact
-        case location
-        case event
-        case sms
-        case wifi
-        case phoneNumber
-        case website
-        case url
+        case text(String)
+        case email(Email)
+        case contact(Contact)
+        case location(Location)
+        case event(Event)
+        case sms(SMS)
+        case wifi(Wifi)
+        case phoneNumber(String)
+        case website(String)
+        case url(String)
+        
+        var action: [Action] {
+            switch self {
+            case .text(let str):
+                return [.copy(str), .safari(str), .chrome(str), .share(str)]
+            case .email(let email):
+                return [.copy(email.message), .safari(email.message), .openMail(email), .share(email.message)]
+            case .contact(let str):
+                return [.copy(str.phoneNumber), .safari(str.phoneNumber), .chrome(str.phoneNumber), .share(str.phoneNumber)]
+            case .event(let event):
+                return [.copy(event.eventTitle), .safari(event.eventTitle), .chrome(event.eventTitle), .share(event.eventTitle)]
+            case .location(let location):
+                return [.copy(location.yourAddress), .safari(location.yourAddress), .chrome(location.yourAddress),  .share(location.yourAddress)]
+            case .phoneNumber(let phone):
+                return [.copy(phone), .safari(phone), .chrome(phone), .share(phone)]
+            case .sms(let sms):
+                return [.copy(sms.message), .safari(sms.message), .chrome(sms.message), .share(sms.message)]
+            case .url(let url):
+                return [.copy(url), .safari(url), .chrome(url), .share(url)]
+            case .website(let website):
+                return [.copy(website), .safari(website), .chrome(website), .share(website)]
+            case .wifi(let wifi):
+                return [.copy(wifi.name), .safari(wifi.name), .chrome(wifi.name), .share(wifi.name)]
+            }
+        }
     }
     
-    func setTypeContentText(){
-        self.typeContent = .text
+    
+    
+    enum Action {
+        case copy(String)
+        case share(String)
+        case safari(String)
+        case chrome(String)
+        case youtube(String)
+        case facebook(String)
+        case openWifi(Wifi)
+        case openMail(Email)
+        case message(SMS)
+        case callPhone(String)
+        
+        var icon: UIImage? {
+            switch self {
+            case .copy:
+                return UIImage.init(named: "copy")
+            default:
+                return UIImage.init(named: "copy")
+            }
+        }
+        
+        func action() {
+            switch self {
+            case .copy(let str):
+                let pasteboard = UIPasteboard.general
+//                    ScanManager.displayToastMessage("Copied to clipboard")
+                pasteboard.string = str as? String
+                break
+            case .share(let string):
+                let text = string
+                // set up activity view controller
+                let textToShare = [ text ]
+                let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = ScanCodeViewController().view
+                activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
+                ScanCodeViewController().present(activityViewController, animated: true, completion: nil)
+            case .safari(let str):
+                guard let url = URL(string: str) else { return }
+                UIApplication.shared.open(url)
+            case .chrome(let str):
+                guard let url = URL(string: str) else { return }
+                UIApplication.shared.open(url)
+            case .youtube(let str):
+                guard let url = URL(string: str) else { return }
+                UIApplication.shared.open(url)
+            case .facebook(let str):
+                guard let url = URL(string: str) else { return }
+                UIApplication.shared.open(url)
+            case .openWifi(let wifi):
+                print("Connecting to Wifi ",wifi.name, wifi.password )
+            case .openMail(let email):
+                print("Open email ", email.yourEmail)
+            case .message(let message):
+                print("Open message ", message.yourPhone)
+            case .callPhone(let phone):
+                print("Open phone ", phone)
+            }
+        }
     }
     
-    func setTypeContentEmail(){
-        self.typeContent = .email
+    public func setOriginText(originText: String){
+        self.originText = originText
     }
     
-    func setTypeContentContact(){
-        self.typeContent = .contact
+    func substring(string: String, fromIndex: Int, toIndex: Int) -> String? {
+        if fromIndex < toIndex && toIndex < string.count /*use string.characters.count for swift3*/{
+            let startIndex = string.index(string.startIndex, offsetBy: fromIndex)
+            let endIndex = string.index(string.startIndex, offsetBy: toIndex)
+            return String(string[startIndex..<endIndex])
+        }else{
+            return nil
+        }
     }
     
-    func setTypeContentLocation(){
-        self.typeContent = .location
+    public func scan(originText: String) -> TypeContent {
+        let contentUse = originText.lowercased()
+        if(contentUse.prefix(6).contains("tel:")){
+            typeContentScan = "Phone Number"
+            
+        }else if(contentUse.prefix(6).contains("wifi")){
+            typeContentScan = "WIFI"
+        } else if(contentUse.prefix(6).contains("smsto:")){
+            typeContentScan = "SMS"
+        } else if(checkTypeContent(for: ConstantManager.RegexValidate.mailRegEx.rawValue, in: contentUse).count>0){
+            typeContentScan = "Email"
+        } else if(checkTypeContent(for: ConstantManager.RegexValidate.youtubeRegex.rawValue, in: contentUse).count>0){
+            typeContentScan = "Youtube"
+        } else if(checkTypeContent(for: ConstantManager.RegexValidate.facebookRegEx.rawValue, in: contentUse).count>0){
+            typeContentScan = "Facebook"
+        } else if(contentUse.prefix(40).contains("instagram")){
+            typeContentScan = "Instagram"
+        } else if(contentUse.prefix(40).contains("maps.google.com") || contentUse.prefix(40).contains("www.google.com/maps")){
+            typeContentScan = "Google Map"
+            let location = Location.init(yourAddress: "Location", latitude: "21.02375615517149", longitude: "105.8426985435633")
+            return .location(location)
+        } else if(checkTypeContent(for: ConstantManager.RegexValidate.urlRegEx.rawValue, in: contentUse).count>0){
+            typeContentScan = "URL"
+            return .text(contentUse)
+        } else {
+            typeContentScan = "Text"
+            return .text(contentUse)
+        }
+        return .text("aString")
     }
     
-    func setTypeContentEvent(){
-        self.typeContent = .event
+    func checkTypeContent(for regex: String, in text: String) -> [String] {
+        do {
+            let regex = try NSRegularExpression(pattern: regex)
+            let nsString = text as NSString
+            let results = regex.matches(in: text, range: NSRange(location: 0, length: nsString.length))
+            print("\(results)")
+            return results.map { nsString.substring(with: $0.range)}
+        } catch let error {
+            print("invalid regex: \(error.localizedDescription)")
+            return []
+        }
     }
     
-    func setTypeContentSMS(){
-        self.typeContent = .sms
+    func setTypeContentText(string: String){
+        self.typeContent = .text(string)
+        
     }
     
-    func setTypeContentWifi(){
-        self.typeContent = .wifi
+    func setTypeContentEmail(email: Email){
+        self.typeContent = .email(email)
     }
     
-    func setTypeContentPhoneNumber(){
-        self.typeContent = .phoneNumber
+    func setTypeContentContact(contact: Contact){
+        self.typeContent = .contact(contact)
     }
     
-    func setTypeContentWebsite(){
-        self.typeContent = .website
+    func setTypeContentLocation(location: Location){
+        self.typeContent = .location(location)
     }
     
-    func setTypeContentUrl(){
-        self.typeContent = .url
+    func setTypeContentEvent(event: Event){
+        self.typeContent = .event(event)
+    }
+    
+    func setTypeContentSMS(sms: SMS){
+        self.typeContent = .sms(sms)
+    }
+    
+    func setTypeContentWifi(wifi: Wifi){
+        self.typeContent = .wifi(wifi)
+    }
+    
+    func setTypeContentPhoneNumber(string: String){
+        self.typeContent = .phoneNumber(string)
+    }
+    
+    func setTypeContentWebsite(string: String){
+        self.typeContent = .website(string)
+    }
+    
+    func setTypeContentUrl(string: String){
+        self.typeContent = .url(string)
     }
     
     func setContentGenerate(content: String){
@@ -198,17 +352,24 @@ class ScanManager {
     }
     
     func generateQRCode(from string: String) -> UIImage? {
-        let data = string.data(using: String.Encoding.ascii)
+        let data = string.data(using: String.Encoding.utf8)
         
         if let filter = CIFilter(name: "CIQRCodeGenerator") {
             filter.setValue(data, forKey: "inputMessage")
             let transform = CGAffineTransform(scaleX: 10, y: 10)
             
             if let output = filter.outputImage?.transformed(by: transform) {
-                return UIImage(ciImage: output)
+                return convert(output)
             }
         }
         return nil
+    }
+    
+    func convert(_ cmage:CIImage) -> UIImage {
+        let context:CIContext = CIContext.init(options: nil)
+        let cgImage:CGImage = context.createCGImage(cmage, from: cmage.extent)!
+        let image:UIImage = UIImage.init(cgImage: cgImage)
+        return image
     }
     
 //    func showAlert(content: String, title1: String, title2: String){

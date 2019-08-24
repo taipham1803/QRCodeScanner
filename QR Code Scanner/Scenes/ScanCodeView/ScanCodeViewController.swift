@@ -11,6 +11,24 @@ import AVFoundation
 import MessageUI
 import PopupDialog
 import CoreData
+import AudioToolbox
+
+extension UIDevice {
+    static var isHapticsSupported : Int {
+        let feedback = UIImpactFeedbackGenerator(style: .heavy)
+        feedback.prepare()
+        var string = feedback.debugDescription
+        string.removeLast()
+        let number = string.suffix(1)
+        if number == "1" {
+            return 1
+        } else if number == "2" {
+            return 2
+        } else {
+            return 0
+        }
+    }
+}
 
 @nonobjc extension UIViewController {
     func add(_ child: UIViewController, frame: CGRect? = nil) {
@@ -38,15 +56,17 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         case Back
     }
     
-
-    @IBOutlet weak var modalBottomContent: UIView!
-
+//    @IBOutlet weak var imgViewSafari: UIImageView!
+//    @IBOutlet weak var imgViewChrome: UIImageView!
+    @IBOutlet var btnActions: [UIButton]!
     @IBOutlet var modalView: UIView!
     @IBOutlet weak var viewGroupTop: UIView!
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var lblContent: UILabel!
     @IBOutlet weak var lblShowContentCode: UILabel!
     @IBOutlet weak var lblTypeDetected: UILabel!
+    @IBOutlet weak var showContentQRCode: UIView!
+    
     
     private var boundingBox = CAShapeLayer()
     var captureSession: AVCaptureSession!
@@ -63,6 +83,8 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     let message = "This is the message section of the popup dialog default view"
     let image = UIImage(named: "pexels-photo-103290")
     var isOpenFlash: Bool = false
+    var actions: [ScanManager.Action] = []
+    let pasteboard = UIPasteboard.general
     
     let buttonOne = CancelButton(title: "CANCEL") {
         print("You canceled the car dialog.")
@@ -78,22 +100,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
     @IBAction func btnCloseBottomModal(_ sender: Any) {
         hideTableOptionOpen()
-    }
-    
-    @IBAction func btnAgain(_ sender: Any) {
-        captureSession.stopRunning()
-        captureSession.startRunning()
-    }
-    
-    @IBAction func btnOpenContent(_ sender: Any) {
-        print("Press button btnOpenContent")
-        if(stringContent != "default"){
-            guard let content = URL(string: stringContent) else {
-                return
-            }
-            UIApplication.shared.open(content)
-
-        }
     }
     
     @IBAction func btnSwitchCamera(_ sender: Any) {
@@ -113,7 +119,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         self.openGallary()
     }
     
-    let pasteboard = UIPasteboard.general
+    
     @IBAction func btnCopy(_ sender: Any) {
         ScanManager.shared.displayToastMessage("Copied to clipboard")
         pasteboard.string = stringContent
@@ -125,7 +131,12 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     }
     
     @IBAction func btnChrome(_ sender: Any) {
-        openOnChrome(urlSource: "https://emddi.com")
+//        openOnChrome(urlSource: "https://emddi.com")
+        guard let messageAppURL = NSURL(string: stringContent)
+            else { return }
+        if UIApplication.shared.canOpenURL(messageAppURL as URL) {
+            UIApplication.shared.openURL(messageAppURL as URL)
+        }
     }
     
     @IBAction func btnShare(_ sender: Any) {
@@ -142,21 +153,46 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         self.present(activityViewController, animated: true, completion: nil)
     }
     
+    var controller: DetectedViewController!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
         captureSession = AVCaptureSession()
         imagePicker = UIImagePickerController()
         imagePicker.delegate = self
-        buildModalView()
         buildViewGroupTop()
+        createDetectedView()
         autoCapture()
         setupBoundingBox()
     }
     
+    private func createDetectedView(){
+        if (controller == nil){
+            let detectView = self.storyboard?.instantiateViewController(withIdentifier: "DetectedViewController") as! DetectedViewController
+            controller = detectView
+            
+            let heightSubView = CGFloat(integerLiteral: 240)
+            
+            //        let viewModal = DetectedViewController()
+            
+            
+            let theHeight = UIScreen.main.bounds.size.height
+            let theWidth = UIScreen.main.bounds.size.width
+            controller?.view.frame = CGRect(x: 20, y: theHeight - heightSubView - 140 , width: theWidth - 40, height: heightSubView)
+            controller?.willMove(toParentViewController: self)
+            self.view.addSubview(controller!.view)
+            
+            self.addChildViewController(controller!)
+            controller!.didMove(toParentViewController: self)
+            
+            controller.btnClose.addTarget(self, action: #selector(btnCloseDidTap), for: .touchUpInside)
+        }
+        
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
     }
     
     func buildViewGroupTop(){
@@ -172,24 +208,11 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         modalView.layer.shadowRadius = 5
     }
     
-    func openOnChrome(urlSource: String){
-        var urlChrome = ""
-        if(urlSource.prefix(7).contains("http")){
-            urlChrome = urlSource.replacingOccurrences(of: "http://", with: "googlechrome://")
-        } else if (urlSource.prefix(7).contains("https")){
-            urlChrome = urlSource.replacingOccurrences(of: "https://", with: "googlechrome://")
-        } else {
-            urlChrome = "googlechrome://" + urlSource
-        }
-        guard let url = URL(string: urlChrome) else { return }
-        UIApplication.shared.open(url)
-    }
-    
     func animateIn(){
-        let theHeight = view.frame.size.height
-        let heightSubView = CGFloat(integerLiteral: 240)
-        modalView.frame = CGRect(x: 20, y: theHeight - heightSubView - 100 , width: self.view.frame.width - 40, height: heightSubView)
-        modalView.layer.cornerRadius = 12
+//        let theHeight = view.frame.size.height
+
+//        modalView.frame = CGRect(x: 20, y: theHeight - heightSubView - 140 , width: self.view.frame.width - 40, height: heightSubView)
+//        modalView.layer.cornerRadius = 12
     
 //        let size = 260
 //        let screenWidth = self.view.frame.size.width
@@ -200,33 +223,56 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
 //        self.view.addSubview(draggableView)
 //        
 //        modalView.center.x = view.center.x
-        self.view.addSubview(modalView)
+//        self.view.addSubview(viewModal)
         let transition = CATransition()
         transition.duration = 0.5
 //        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
 //        transition.type = .moveIn
 //        transition.subtype = .fromTop
-        modalView?.layer.add(transition, forKey: kCATransition)
-        modalView.alpha = 0
         
+//        modalView?.layer.add(transition, forKey: kCATransition)
+//        modalView.alpha = 0
+        let heightSubView = CGFloat(integerLiteral: 240)
+        
+        //        let viewModal = DetectedViewController()
+        
+        
+        let theHeight = UIScreen.main.bounds.size.height
+        let theWidth = UIScreen.main.bounds.size.width
+        controller!.view.frame = CGRect(x: 20, y: theHeight - heightSubView - 140 , width: theWidth - 40, height: heightSubView)
+        controller.scanCode()
+//        controller.lblContentCode.text = ScanManager.shared.originText
+//        controller.lblTypeCode.text = ScanManager.shared.typeContentScan
+
+        
+        view.bringSubview(toFront: controller.view)
+//
         UIView.animate(withDuration: 0.4){
-            self.modalView.alpha = 1
-            self.modalView.transform = CGAffineTransform.identity
+            self.controller!.view.alpha = 1
+            self.controller!.view.transform = CGAffineTransform.identity
         }
+        
+
+    }
+    
+    @objc func btnCloseDidTap() {
+        hideTableOptionOpen()
     }
     
     func hideTableOptionOpen(){
         let screenSize = UIScreen.main.bounds.size
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 1.0, options: .curveEaseInOut, animations: {
-            self.modalView.frame = CGRect(x: 0, y: screenSize.height, width: screenSize.width, height: screenSize.height)
+            self.controller!.view.frame = CGRect(x: 0, y: screenSize.height, width: screenSize.width, height: screenSize.height)
+            self.controller.view.alpha = 0
         }){ (success:Bool) in
-            self.modalView.removeFromSuperview()
+//            self.controller!.view.removeFromSuperview()
+            self.controller.view.alpha = 0
         }
     }
     
     func loadModalOpen() {
         let modalVC = ModalViewController()
-        let rect = CGRect(x: view.frame.origin.x, y: view.frame.maxY - modalVC.view.frame.maxY, width: view.frame.maxX, height: 400)
+        let rect = CGRect(x: view.frame.origin.x, y: view.frame.maxY - modalVC.view.frame.maxY, width: view.frame.maxX, height: 380)
         add(modalVC, frame: rect)
     }
     
@@ -258,8 +304,10 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
             return
         }
     
+//        let yPos = (view.subviews.map { $0.frame.height }).reduce(0, +)
+        let yPos = UIApplication.shared.statusBarFrame.height
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = CGRect(x: 0.0, y: 25, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - (tabBarController?.tabBar.frame.size.height)! - 35)
+        previewLayer.frame = CGRect(x: 0.0, y: yPos, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - (tabBarController?.tabBar.frame.size.height)! - yPos - 20)
         previewLayer.cornerRadius = 16
 //        previewLayer.layer.cornerRadius = 25
         previewLayer.backgroundColor = UIColor.red.cgColor
@@ -267,12 +315,28 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         view.layer.addSublayer(previewLayer)
         view.addSubview(viewGroupTop)
         captureSession.startRunning()
+        
+    }
+    
+    
+    func openOnChrome(urlSource: String){
+        var urlChrome = ""
+        if(urlSource.prefix(7).contains("http")){
+            urlChrome = urlSource.replacingOccurrences(of: "http://", with: "googlechrome://")
+        } else if (urlSource.prefix(7).contains("https")){
+            urlChrome = urlSource.replacingOccurrences(of: "https://", with: "googlechrome://")
+        } else {
+            urlChrome = "googlechrome://" + urlSource
+        }
+        guard let url = URL(string: urlChrome) else { return }
+        UIApplication.shared.open(url)
     }
     
     
     private func setupBoundingBox() {
+         let yPos = (view.subviews.map { $0.frame.height }).reduce(0, +)
         boundingBox.frame = view.layer.bounds
-        boundingBox.frame =  CGRect(x: 0 , y: 20, width: self.view.frame.width, height: self.view.frame.height)
+        boundingBox.frame =  CGRect(x: 0 , y: yPos, width: self.view.frame.width, height: self.view.frame.height)
         boundingBox.strokeColor = UIColor.red.cgColor
         boundingBox.lineWidth = 4.0
         boundingBox.fillColor = UIColor.clear.cgColor
@@ -287,14 +351,11 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         
         let path = UIBezierPath()
         path.move(to: firstPoint)
-        
         var newPoints = points
         newPoints.removeFirst()
 //        firstPoint.x = firstPoint.x + 100
         newPoints.append(firstPoint)
-        
         newPoints.forEach { path.addLine(to: $0) }
-        
         boundingBox.path = path.cgPath
         boundingBox.isHidden = false
     }
@@ -310,32 +371,18 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
     private func resetViews() {
         boundingBox.isHidden = true
+        
+
     }
 
     func checkContentFromCode(content: String){
         let contentUse = content.lowercased()
-        if(contentUse.prefix(6).contains("tel:")){
-            typeContentDetected = "Phone Number"
-        }else if(contentUse.prefix(6).contains("wifi")){
-            typeContentDetected = "WIFI"
-        } else if(contentUse.prefix(6).contains("smsto:")){
-            typeContentDetected = "SMS"
-        } else if(checkTypeContent(for: ConstantManager.RegexValidate.mailRegEx.rawValue, in: contentUse).count>0){
-            typeContentDetected = "Email"
-        } else if(checkTypeContent(for: ConstantManager.RegexValidate.youtubeRegex.rawValue, in: contentUse).count>0){
-            typeContentDetected = "Youtube"
-        } else if(checkTypeContent(for: ConstantManager.RegexValidate.facebookRegEx.rawValue, in: contentUse).count>0){
-            typeContentDetected = "Facebook"
-        } else if(contentUse.prefix(40).contains("maps.google.com") || contentUse.prefix(40).contains("www.google.com/maps")){
-            typeContentDetected = "Google Map"
-        } else if(checkTypeContent(for: ConstantManager.RegexValidate.urlRegEx.rawValue, in: contentUse).count>0){
-            typeContentDetected = "URL"
-        } else {
-            typeContentDetected = "Text"
-            print("This is another case!")
-        }
-        lblShowContentCode.text = content
-        lblTypeDetected.text = typeContentDetected
+        
+        ScanManager.shared.setOriginText(originText: contentUse)
+
+        
+//        lblShowContentCode.text = contentUse
+//        lblTypeDetected.text = ScanManager.shared.typeContentScan
     }
     
     func extractPhoneNumber(content: String) -> String {
@@ -348,18 +395,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
-    func checkTypeContent(for regex: String, in text: String) -> [String] {
-        do {
-            let regex = try NSRegularExpression(pattern: regex)
-            let nsString = text as NSString
-            let results = regex.matches(in: text, range: NSRange(location: 0, length: nsString.length))
-            print("\(results)")
-            return results.map { nsString.substring(with: $0.range)}
-        } catch let error {
-            print("invalid regex: \(error.localizedDescription)")
-            return []
-        }
-    }
+
     
     func playInGoogleMap(urlLocation: String){
 //        UIApplication.shared.openURL(URL(string:urlLocation)!)
@@ -370,27 +406,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
-    func playInYoutube(youtubeUrl: String) {
-        if let youtubeURL = URL(string: youtubeUrl),
-            UIApplication.shared.canOpenURL(youtubeURL) {
-            // redirect to app
-            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
-        } else if let youtubeURL = URL(string: youtubeUrl) {
-            // redirect through safari
-            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
-        }
-    }
-    
-    func playInFacebook(facebookUrl: String) {
-        if let youtubeURL = URL(string: facebookUrl),
-            UIApplication.shared.canOpenURL(youtubeURL) {
-            // redirect to app
-            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
-        } else if let youtubeURL = URL(string: facebookUrl) {
-            // redirect through safari
-            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
-        }
-    }
     
     func openFacebook(facebookUrl: String) {
         guard let url = URL(string: facebookUrl)  else { return }
@@ -426,10 +441,11 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
                 stringContent = row.messageString ?? "Can not scan this code!"
             }
         }
+        
         picker.dismiss(animated: true, completion: nil)
         checkContentFromCode(content: stringContent)
         animateIn()
-        let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: stringContent, type: typeContentDetected)
+        let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: stringContent, type: ScanManager.shared.typeContentScan)
         ScanManager.shared.saveNewScanResult(scan: newScan)
         
 //        picker.dismiss(animated: true) {
@@ -447,7 +463,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         imagePicker.allowsEditing = true
         self.present(imagePicker, animated: true, completion: nil)
     }
-    
     
     func detectQRCode(_ image: UIImage?) -> [CIFeature]? {
         if let image = image, let ciImage = CIImage.init(image: image){
@@ -542,24 +557,33 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
     }
     
+    func createFeelbackHaptic(){
+        let isSupportHaptic:Int = UIDevice.current.value(forKey: "_feedbackSupportLevel") as! Int
+        if (isSupportHaptic == 0) {
+            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+        } else if (isSupportHaptic == 1){
+            AudioServicesPlaySystemSound(1520)
+        } else {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+        }
+    }
+    
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
 //        captureSession.stopRunning()
         if let metadataObject = metadataObjects.first {
             guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
             guard let stringValue = readableObject.stringValue else { return }
             if(stringValue != stringContent){
-                AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+                createFeelbackHaptic()
                 found(code: stringValue)
             }
             
             guard let transformedObject = previewLayer.transformedMetadataObject(for: metadataObject) as? AVMetadataMachineReadableCodeObject else {
                 return
             }
-
-            
             updateBoundingBox(transformedObject.corners)
             hideBoundingBox(after: 0.25)
-
         }
         
         dismiss(animated: true)
@@ -572,8 +596,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         animateIn()
         let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: stringContent, type: typeContentDetected)
         ScanManager.shared.saveNewScanResult(scan: newScan)
-        
-//        self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
     }
     
     override var prefersStatusBarHidden: Bool {

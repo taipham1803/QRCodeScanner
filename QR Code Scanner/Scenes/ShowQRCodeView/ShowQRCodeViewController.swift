@@ -31,71 +31,17 @@ class ShowQRCodeViewController: UIViewController {
     }
     
     @IBAction func btnSave(_ sender: Any){
-        if (saveImage(image: imgQR)){
-            print("Save image success!")
-        } else {
-            print("Save image fail!")
-        }
-        imgCheckQR.image = imgQR
-        if let message = storeImageToDocumentDirectory(image: imgQR, fileName: "QRCode"){
-            print(message)
-        }
+        guard let image = imgViewQRCode.image else { return }
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
     
     @IBAction func btnShare(_ sender: Any) {
-//        shareContent(text: contentToGenerate)
-        shareImage(image: ScanManager.shared.generateQRCode(from: contentToGenerate)!)
-//        shareImagePro()
-        
-//        let img: UIImage = imgQR
-//        let shareItems:Array = [img]
-//        let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-//        activityViewController.excludedActivityTypes = [UIActivityType.print, UIActivityType.postToWeibo, UIActivityType.copyToPasteboard, UIActivityType.addToReadingList, UIActivityType.postToVimeo]
-//        self.present(activityViewController, animated: true, completion: nil)
-    }
-    
-    func shareImagePro() {
-        let img = UIImage(named: "qrcode")
-        let messageStr = "qrcode"
-        let activityViewController:UIActivityViewController = UIActivityViewController(activityItems:  [img!, messageStr], applicationActivities: nil)
-        activityViewController.excludedActivityTypes = [UIActivityType.print, UIActivityType.postToWeibo, UIActivityType.copyToPasteboard, UIActivityType.addToReadingList, UIActivityType.postToVimeo]
-        self.present(activityViewController, animated: true, completion: nil)
-    }
-    
-    func shareImage(image: UIImage){
-        let imageShare = [ image ]
-        let activityViewController = UIActivityViewController(activityItems: imageShare , applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = self.view
-        self.present(activityViewController, animated: true, completion: nil)
+        shareImagePro(img: ScanManager.shared.generateQRCode(from: contentToGenerate)!)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         generateQRCode()
-    }
-    
-    public static var documentsDirectoryURL: URL {
-        return FileManager.default.urls(for:.documentDirectory, in: .userDomainMask)[0]
-    }
-    public static func fileURLInDocumentDirectory(_ fileName: String) -> URL {
-        return self.documentsDirectoryURL.appendingPathComponent(fileName)
-    }
-    
-    func storeImageToDocumentDirectory(image: UIImage, fileName: String) -> URL? {
-        print("Run storeImageToDocumentDirectory")
-        guard let data = UIImageJPEGRepresentation(image, 0.5) else {
-            print("data nil")
-            return nil
-        }
-        let fileURL = ShowQRCodeViewController.fileURLInDocumentDirectory(fileName)
-        do {
-            try data.write(to: fileURL)
-            print("data fileURL")
-            return fileURL
-        } catch {
-            print("data catch")
-            return nil
-        }
     }
     
     func generateQRCode(){
@@ -131,7 +77,7 @@ class ShowQRCodeViewController: UIViewController {
             guard let sms = ScanManager.shared.contentGenerateSMS else {
                 return
             }
-            contentToGenerate = "SMSTO:" + sms.yourPhone + ":" + sms.message
+            contentToGenerate = "sms:\(sms.yourPhone)&body=\(sms.message)"
             lblQRCodeType.text = "QR Code SMS"
         case .wifi:
             guard let wifi = ScanManager.shared.contentGenerateWifi else {
@@ -164,28 +110,31 @@ class ShowQRCodeViewController: UIViewController {
         imgQR = ScanManager.shared.generateQRCode(from: contentToGenerate)!
     }
     
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            let ac = UIAlertController(title: "Save error", message: error.localizedDescription, preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        } else {
+            let ac = UIAlertController(title: "Saved!", message: "Your altered image has been saved to your photos.", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        }
+    }
+    
+    func shareImagePro(img: UIImage) {
+        let messageStr = "qrcode"
+        let activityViewController:UIActivityViewController = UIActivityViewController(activityItems:  [img, messageStr], applicationActivities: nil)
+        activityViewController.excludedActivityTypes = [UIActivityType.print, UIActivityType.postToWeibo, UIActivityType.copyToPasteboard, UIActivityType.addToReadingList, UIActivityType.postToVimeo]
+        self.present(activityViewController, animated: true, completion: nil)
+    }
+    
     func shareContent(text: String){
         let textToShare = [ text ]
         let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
         activityViewController.popoverPresentationController?.sourceView = self.view
         activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
         self.present(activityViewController, animated: true, completion: nil)
-    }
-    
-    func saveImage(image: UIImage) -> Bool {
-        guard let data = UIImageJPEGRepresentation(image, 1) ?? UIImagePNGRepresentation(image) else {
-            return false
-        }
-        guard let directory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false) as NSURL else {
-            return false
-        }
-        do {
-            try data.write(to: directory.appendingPathComponent("fileName.png")!)
-            return true
-        } catch {
-            print(error.localizedDescription)
-            return false
-        }
     }
     
 }

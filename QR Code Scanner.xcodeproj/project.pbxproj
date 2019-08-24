@@ -38,6 +38,7 @@
 		C7F3A578230A8CB400E1F59C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A577230A8CB400E1F59C /* Location.swift */; };
 		C7F3A57B230B283500E1F59C /* GenerateEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A57A230B283500E1F59C /* GenerateEventViewController.swift */; };
 		C7F3A57D230BDBAB00E1F59C /* MasterDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A57C230BDBAB00E1F59C /* MasterDataManager.swift */; };
+		C7F3A57F230C4D9900E1F59C /* DetectedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F3A57E230C4D9900E1F59C /* DetectedViewController.swift */; };
 		C7F4835822F2DF9500EEA8E0 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */; };
 		C7F4835922F2DF9500EEA8E0 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */; };
 		C7FA62032302B4A20049F13D /* GenerateEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA62022302B4A20049F13D /* GenerateEmailViewController.swift */; };
@@ -83,6 +84,7 @@
 		C7F3A577230A8CB400E1F59C /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		C7F3A57A230B283500E1F59C /* GenerateEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateEventViewController.swift; sourceTree = "<group>"; };
 		C7F3A57C230BDBAB00E1F59C /* MasterDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterDataManager.swift; sourceTree = "<group>"; };
+		C7F3A57E230C4D9900E1F59C /* DetectedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedViewController.swift; sourceTree = "<group>"; };
 		C7F4835622F2DF9500EEA8E0 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		C7F4835722F2DF9500EEA8E0 /* HistoryTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HistoryTableViewCell.xib; sourceTree = "<group>"; };
 		C7FA62022302B4A20049F13D /* GenerateEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateEmailViewController.swift; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 			children = (
 				C7F28D4522EF448700FD17C5 /* Modal */,
 				C7AD111C22E170A800DB58FD /* ScanCodeViewController.swift */,
+				C7F3A57E230C4D9900E1F59C /* DetectedViewController.swift */,
 			);
 			path = ScanCodeView;
 			sourceTree = "<group>";
@@ -498,6 +501,7 @@
 				C7F3A4A52306B65300E1F59C /* Email.swift in Sources */,
 				C7FA620E2302CFE50049F13D /* GenerateContactViewController.swift in Sources */,
 				C7AD112322E1C2F800DB58FD /* ContentViewController.swift in Sources */,
+				C7F3A57F230C4D9900E1F59C /* DetectedViewController.swift in Sources */,
 				C7F4835822F2DF9500EEA8E0 /* HistoryTableViewCell.swift in Sources */,
 				C72D5E9922E2C888005109E3 /* HistoryViewController.swift in Sources */,
 				C7FA62052302B4CA0049F13D /* GenerateTextViewController.swift in Sources */,

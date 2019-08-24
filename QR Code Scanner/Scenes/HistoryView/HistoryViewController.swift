@@ -18,6 +18,9 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var items: [EntityScan] = []
+    var titleActionOne: String = ""
+    var titleActionTwo: String = "Copy to clipboard"
+    var titleActionThree: String = "Share"
     
     let arrayResultScan:[Scan] = ScanManager.shared.historyScan
     override func viewDidLoad() {
@@ -34,7 +37,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewWillAppear(_ animated: Bool) {
         fetchData()
         self.tableViewHistory.reloadData()
-        if(ScanManager.shared.historyScan.count>0){
+        if(items.count>0){
             print("Check count array history: ", ScanManager.shared.historyScan.count)
             lblNoHistory.text = ""
         }
@@ -53,7 +56,6 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         cell?.lblTitle.text = items.reversed()[indexPath.row].type
         cell?.lblBody.text = items.reversed()[indexPath.row].content
-//        cell?.layer.cornerRadius = 25
         cell?.backgroundColor = UIColor(white: 1, alpha: 0)
         return cell ?? UITableViewCell()
     }
@@ -82,12 +84,57 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Tap on tableView in ", indexPath.row)
-        showActionSheetButtonTapped(index: indexPath.row)
+        if(items.reversed()[indexPath.row].type == "Phone Number"){
+            titleActionOne = "Call on Phone"
+            showActionSheetButtonTapped(index: indexPath.row)
+        } else if(items.reversed()[indexPath.row].type == "WIFI"){
+            titleActionOne = "Connect Wifi"
+            showActionSheetButtonTapped(index: indexPath.row)
+        } else if(items.reversed()[indexPath.row].type == "SMS"){
+            titleActionOne = "Open on Message"
+            sendMessage(message: items.reversed()[indexPath.row].content!)
+            showActionSheetButtonTapped(index: indexPath.row)
+        } else if(items.reversed()[indexPath.row].type == "Email"){
+            titleActionOne = "Open on Gmail"
+            showActionSheetButtonTapped(index: indexPath.row)
+        } else if(items.reversed()[indexPath.row].type == "Youtube"){
+            titleActionOne = "Open on Youtube"
+            showActionSheetButtonTapped(index: indexPath.row)
+        } else if(items.reversed()[indexPath.row].type == "Facebook"){
+            titleActionOne = "Open on Facebook"
+//            showActionSheetButtonTapped(index: indexPath.row)
+            playInFacebook(facebookUrl: "fb://profile/100006422011733")
+        } else if(items.reversed()[indexPath.row].type == "Google Map"){
+            titleActionOne = "Open on Maps"
+            showActionSheetButtonTapped(index: indexPath.row)
+        } else if(items.reversed()[indexPath.row].type == "URL"){
+            titleActionOne = "Open on Safari"
+            showActionSheetButtonTapped(index: indexPath.row)
+        } else if(items.reversed()[indexPath.row].type == "Text"){
+            titleActionOne = "Open on Safari"
+            showActionSheetButtonTapped(index: indexPath.row)
+        }
+        
+    }
+    
+    func sendMessage(message: String){
+//        let message: String = "sms:+1234567890&body=Hello Abc How are You I am ios developer."
+        let strURL: String = message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        UIApplication.shared.open(URL.init(string: strURL)!, options: [:], completionHandler: nil)
+    }
+    
+    func playInFacebook(facebookUrl: String) {
+        if let youtubeURL = URL(string: facebookUrl),
+            UIApplication.shared.canOpenURL(youtubeURL) {
+            // redirect to app
+            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
+        } else if let youtubeURL = URL(string: facebookUrl) {
+            // redirect through safari
+            UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
+        }
     }
     
     func fetchData() {
-        
         do {
             items = try context.fetch(EntityScan.fetchRequest())
             print(items)
@@ -97,11 +144,9 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
         } catch {
             print("Couldn't Fetch Data")
         }
-        
     }
     
     func shareContent(text: String){
-        // set up activity view controller
         let textToShare = [ text ]
         let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
         activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
@@ -114,40 +159,34 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func showActionSheetButtonTapped(index: Int){
-        let myActionSheet = UIAlertController(title: "Color", message: "What do you want?", preferredStyle: UIAlertController.Style.actionSheet)
+        let myActionSheet = UIAlertController(title: "Open history", message: "What do you want?", preferredStyle: UIAlertController.Style.actionSheet)
         
-        // blue action button
-        let blueAction = UIAlertAction(title: "Open on Safari", style: UIAlertAction.Style.default) { (action) in
-            print("Open on Safari button tapped")
-            guard let url = URL(string: self.items[index].content!) else { return }
+        let actionOne = UIAlertAction(title: titleActionOne, style: UIAlertAction.Style.default) { (action) in
+            print("Open actionOne with index = ", index)
+            guard let url = URL(string: self.items.reversed()[index].content!) else { return }
             UIApplication.shared.open(url)
         }
         
-        // red action button
-        let redAction = UIAlertAction(title: "Copy to clipboard", style: UIAlertAction.Style.default) { (action) in
+        let actionTwo = UIAlertAction(title: titleActionTwo, style: UIAlertAction.Style.default) { (action) in
             print("Copy to clipboard button tapped")
             ScanManager.shared.displayToastMessage("Copied to clipboard")
-            self.pasteboard.string = self.items[index].content!
+            self.pasteboard.string = self.items.reversed()[index].content
         }
         
-        // yellow action button
-        let yellowAction = UIAlertAction(title: "Share", style: UIAlertAction.Style.default) { (action) in
+        let actionThree = UIAlertAction(title: titleActionThree, style: UIAlertAction.Style.default) { (action) in
             print("Share button tapped")
-            self.shareContent(text: self.items[index].content!)
+            self.shareContent(text: self.items.reversed()[index].content!)
         }
-        
-        // cancel action button
+
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (action) in
             print("Cancel action button tapped")
         }
-        
-        // add action buttons to action sheet
-        myActionSheet.addAction(blueAction)
-        myActionSheet.addAction(redAction)
-        myActionSheet.addAction(yellowAction)
+ 
+        myActionSheet.addAction(actionOne)
+        myActionSheet.addAction(actionTwo)
+        myActionSheet.addAction(actionThree)
         myActionSheet.addAction(cancelAction)
-        
-        // present the action sheet
+ 
         DispatchQueue.main.async {
             self.present(myActionSheet, animated: true, completion: nil)
         }
