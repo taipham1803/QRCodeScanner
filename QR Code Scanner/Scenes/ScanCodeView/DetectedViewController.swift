@@ -27,22 +27,32 @@ class DetectedViewController: UIViewController {
         
 //        scanCode()
         setupContainerView()
-        setupFunctionBtnActions()
+//        setupFunctionBtnActions()
     }
     
     func scanCode(){
         let result = ScanManager.shared.scan(originText: ScanManager.shared.originText)
-        let actions = result.action
-        for i in 0..<btnActions.count {
-            btnActions[i].tag = i
-            btnActions[i].setImage(actions[i].icon, for: .normal)
+        actions = result.action
+        for index in (0..<btnActions.count).reversed() {
+            btnActions[index].tag = index
+            btnActions[index].setImage(actions[index].icon, for: .normal)
+            btnActions[index].imageView?.contentMode = .scaleAspectFit
+            btnActions[index].addTarget(self, action: #selector(btnActionsTaped(sender:)), for: .touchUpInside)
         }
         lblContentCode.text = ScanManager.shared.originText
         lblTypeCode.text = ScanManager.shared.typeContentScan
+        let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: ScanManager.shared.originText, type: ScanManager.shared.typeContentScan)
+        ScanManager.shared.saveNewScanResult(scan: newScan)
     }
     
     private func setupFunctionBtnActions(){
-        for index in 0..<btnActions.count{
+//        for index in 0..<btnActions.count{
+//            btnActions[index].tag = index
+//            btnActions[index].imageView?.contentMode = .scaleAspectFit
+//            btnActions[index].addTarget(self, action: #selector(btnActionsTaped(sender:)), for: .touchUpInside)
+//        }
+        
+        for index in (0..<btnActions.count).reversed() {
             btnActions[index].tag = index
             btnActions[index].imageView?.contentMode = .scaleAspectFit
             btnActions[index].addTarget(self, action: #selector(btnActionsTaped(sender:)), for: .touchUpInside)
@@ -50,31 +60,36 @@ class DetectedViewController: UIViewController {
     }
     
     @objc func btnActionsTaped(sender: UIButton) {
+
         switch sender.tag {
         case 0:
             actions[sender.tag].action()
             print(sender.tag)
+            print("case 0")
         case 1:
             actions[sender.tag].action()
             print(sender.tag)
+            print("case 1")
         case 2:
             actions[sender.tag].action()
             print(sender.tag)
+            print("case 2")
         case 3:
             actions[sender.tag].action()
             print(sender.tag)
+            print("case 3")
         default:
             print(-1)
         }
     }
     
     func setupContainerView(){
-        containerView.layer.cornerRadius = 5
+        containerView.layer.cornerRadius = 20
         containerView.backgroundColor = .white
         containerView.layer.shadowColor = UIColor.gray.cgColor
         containerView.layer.shadowOpacity = 1
         containerView.layer.shadowOffset = CGSize.zero
-        containerView.layer.shadowRadius = 5
+        containerView.layer.shadowRadius = 20
     }
 
     /*

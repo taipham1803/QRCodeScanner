@@ -10,6 +10,38 @@ import Foundation
 import UIKit
 import AVFoundation
 import CoreData
+import NetworkExtension
+
+//extension StringProtocol { // for Swift 4.x syntax you will needed also to constrain the collection Index to String Index - `extension StringProtocol where Index == String.Index`
+//    func index(of string: Self, options: String.CompareOptions = []) -> Index? {
+//        return range(of: string, options: options)?.lowerBound
+//    }
+//    func endIndex(of string: Self, options: String.CompareOptions = []) -> Index? {
+//        return range(of: string, options: options)?.upperBound
+//    }
+//    func indexes(of string: Self, options: String.CompareOptions = []) -> [Index] {
+//        var result: [Index] = []
+//        var startIndex = self.startIndex
+//        while startIndex < endIndex,
+//            let range = self[startIndex...].range(of: string, options: options) {
+//                result.append(range.lowerBound)
+//                startIndex = range.lowerBound < range.upperBound ? range.upperBound :
+//                    index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
+//        }
+//        return result
+//    }
+//    func ranges(of string: Self, options: String.CompareOptions = []) -> [Range<Index>] {
+//        var result: [Range<Index>] = []
+//        var startIndex = self.startIndex
+//        while startIndex < endIndex,
+//            let range = self[startIndex...].range(of: string, options: options) {
+//                result.append(range)
+//                startIndex = range.lowerBound < range.upperBound ? range.upperBound :
+//                    index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
+//        }
+//        return result
+//    }
+//}
 
 class ScanManager {
     
@@ -35,7 +67,7 @@ class ScanManager {
     fileprivate(set) var contentGenerateEvent: Event?
     fileprivate(set) var contentGenerateWifi: Wifi?
     fileprivate(set) var contentGenerateLocation: Location?
-
+    
     enum Status {
         case scan
         case generate
@@ -44,7 +76,7 @@ class ScanManager {
     
     enum TypeContent {
         case text(String)
-        case email(Email)
+        case email(String)
         case contact(Contact)
         case location(Location)
         case event(Event)
@@ -53,34 +85,41 @@ class ScanManager {
         case phoneNumber(String)
         case website(String)
         case url(String)
+        case instagram(String)
+        case youtube(String)
+//        case instagram(String)
         
         var action: [Action] {
             switch self {
             case .text(let str):
                 return [.copy(str), .safari(str), .chrome(str), .share(str)]
             case .email(let email):
-                return [.copy(email.message), .safari(email.message), .openMail(email), .share(email.message)]
-            case .contact(let str):
-                return [.copy(str.phoneNumber), .safari(str.phoneNumber), .chrome(str.phoneNumber), .share(str.phoneNumber)]
+                return [.copy(email), .safari(email), .openMail(email), .share(email)]
+            case .contact(let contact):
+//                let sms = SMS.init(yourPhone: contact.phoneNumber, message: contact.note)
+                return [.copy(contact.phoneNumber), .message(contact.phoneNumber), .callPhone(contact.phoneNumber), .share(contact.phoneNumber)]
             case .event(let event):
                 return [.copy(event.eventTitle), .safari(event.eventTitle), .chrome(event.eventTitle), .share(event.eventTitle)]
             case .location(let location):
-                return [.copy(location.yourAddress), .safari(location.yourAddress), .chrome(location.yourAddress),  .share(location.yourAddress)]
+                return [.copy(location.yourAddress), .safari(location.yourAddress), .openMap(location),  .share(location.yourAddress)]
             case .phoneNumber(let phone):
-                return [.copy(phone), .safari(phone), .chrome(phone), .share(phone)]
+//                let sms = SMS.init(yourPhone: phone, message: "your message")
+                return [.copy(phone), .message(phone), .callPhone(phone), .share(phone)]
             case .sms(let sms):
-                return [.copy(sms.message), .safari(sms.message), .chrome(sms.message), .share(sms.message)]
+                return [.copy(sms.message), .callPhone(sms.yourPhone), .message(sms.message), .share(sms.message)]
             case .url(let url):
                 return [.copy(url), .safari(url), .chrome(url), .share(url)]
             case .website(let website):
                 return [.copy(website), .safari(website), .chrome(website), .share(website)]
             case .wifi(let wifi):
-                return [.copy(wifi.name), .safari(wifi.name), .chrome(wifi.name), .share(wifi.name)]
+                return [.copy(wifi.name + wifi.password + wifi.encryption), .safari(wifi.name), .openWifi(wifi), .share(wifi.name)]
+            case .instagram(let user):
+                return [.copy(user), .safari(user), .openInstagram(user), .share(user)]
+            case .youtube(let link):
+                return [.copy(link), .safari(link), .youtube(link), .share(link)]
             }
         }
     }
-    
-    
     
     enum Action {
         case copy(String)
@@ -90,16 +129,38 @@ class ScanManager {
         case youtube(String)
         case facebook(String)
         case openWifi(Wifi)
-        case openMail(Email)
-        case message(SMS)
+        case openMail(String)
+        case message(String)
         case callPhone(String)
+        case openMap(Location)
+        case openInstagram(String)
         
         var icon: UIImage? {
             switch self {
             case .copy:
                 return UIImage.init(named: "copy")
-            default:
-                return UIImage.init(named: "copy")
+            case .share:
+                return UIImage.init(named: "share")
+            case .safari:
+                return UIImage.init(named: "safari")
+            case .chrome:
+                return UIImage.init(named: "chrome")
+            case .youtube:
+                return UIImage.init(named: "youtube")
+            case .facebook:
+                return UIImage.init(named: "facebook")
+            case .openWifi:
+                return UIImage.init(named: "wifi")
+            case .openMail:
+                return UIImage.init(named: "gmail")
+            case .message:
+                return UIImage.init(named: "imessage")
+            case .callPhone:
+                return UIImage.init(named: "phonenumber")
+            case .openMap:
+                return UIImage.init(named: "map")
+            case .openInstagram:
+                return UIImage.init(named: "instagram")
             }
         }
         
@@ -107,17 +168,23 @@ class ScanManager {
             switch self {
             case .copy(let str):
                 let pasteboard = UIPasteboard.general
-//                    ScanManager.displayToastMessage("Copied to clipboard")
-                pasteboard.string = str as? String
+//                displayToastMessage("Copied to clipboard")
+                pasteboard.string = str
                 break
             case .share(let string):
                 let text = string
-                // set up activity view controller
+                func topViewController()-> UIViewController{
+                    var topViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+                    while ((topViewController.presentedViewController) != nil) {
+                        topViewController = topViewController.presentedViewController!;
+                    }
+                    return topViewController
+                }
                 let textToShare = [ text ]
                 let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
-                activityViewController.popoverPresentationController?.sourceView = ScanCodeViewController().view
+                activityViewController.popoverPresentationController?.sourceView = topViewController().view
                 activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
-                ScanCodeViewController().present(activityViewController, animated: true, completion: nil)
+                topViewController().present(activityViewController, animated: true, completion: nil)
             case .safari(let str):
                 guard let url = URL(string: str) else { return }
                 UIApplication.shared.open(url)
@@ -128,19 +195,76 @@ class ScanManager {
                 guard let url = URL(string: str) else { return }
                 UIApplication.shared.open(url)
             case .facebook(let str):
+                
                 guard let url = URL(string: str) else { return }
                 UIApplication.shared.open(url)
             case .openWifi(let wifi):
-                print("Connecting to Wifi ",wifi.name, wifi.password )
+                print("Connecting to Wifi name: ",wifi.name, wifi.password )
+                let configuration = NEHotspotConfiguration.init(ssid: wifi.name, passphrase: wifi.password, isWEP: false)
+                configuration.joinOnce = true
+                
+                NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
+                    if error != nil {
+                        if error?.localizedDescription == "already associated."
+                        {
+                            print("Connected")
+                        }
+                        else{
+                            print("No Connected")
+                        }
+                    }
+                    else {
+                        print("Connected")
+                    }
+                }
             case .openMail(let email):
-                print("Open email ", email.yourEmail)
+                guard let email = URL(string: email) else { return }
+                UIApplication.shared.open(email)
             case .message(let message):
-                print("Open message ", message.yourPhone)
+                guard let message = URL(string: message) else { return }
+                UIApplication.shared.open(message)
             case .callPhone(let phone):
-                print("Open phone ", phone)
+                guard let phone = URL(string: phone) else { return }
+                UIApplication.shared.open(phone)
+            case .openMap(let location):
+//                guard let location = URL(string: location.yourAddress) else { return }
+//                UIApplication.shared.open(location)
+                UIApplication.shared.open(URL(string:"comgooglemaps://?center=\(location.latitude),\(location.longitude)&zoom=14&views=traffic")!)
+            case .openInstagram(let instagram):
+                let startId = instagram.range(of: "m/")
+                let endId = instagram.range(of: "?")
+                let startIdReal = instagram.index(startId!.lowerBound, offsetBy: 2)
+                let Username = instagram[startIdReal..<endId!.lowerBound]
+                
+//                let Username = "minhoangtan"
+                let appURL = URL(string: "instagram://user?username=\(Username)")!
+                let application = UIApplication.shared
+                
+                if application.canOpenURL(appURL) {
+                    application.open(appURL)
+                } else {
+                    // if Instagram app is not installed, open URL inside Safari
+                    let webURL = URL(string: "https://instagram.com/\(Username)")!
+                    application.open(webURL)
+                }
             }
         }
     }
+    
+        //    https://instagram.com/minhoangtan?igshid=q5zwpd03lyea
+    
+    func openFacebook(facebookUrl: String) {
+        guard let url = URL(string: facebookUrl)  else { return }
+        if UIApplication.shared.canOpenURL(url) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+    }
+    
+
     
     public func setOriginText(originText: String){
         self.originText = originText
@@ -156,27 +280,86 @@ class ScanManager {
         }
     }
     
+    func filterWifi(content: String) -> Wifi{
+        let saveOriginText = content
+        let contentUse = content.lowercased()
+        guard let startSSID = contentUse.range(of: "s:") else { return Wifi.init(name: content, password: "", encryption: "")}
+        
+        let subStringSSID = contentUse[startSSID.lowerBound...]
+        let originSubStringSSID = saveOriginText[startSSID.lowerBound...]
+        
+        guard let endSSID = subStringSSID.range(of: ";") else { return Wifi.init(name: content, password: "", encryption: "") }
+        
+        let startSSIDReal = subStringSSID.index(startSSID.lowerBound, offsetBy: 2)
+        let SSID = originSubStringSSID[startSSIDReal..<endSSID.lowerBound]
+
+        guard let startPassword = contentUse.range(of: "p:") else {return Wifi.init(name: content, password: "", encryption: "")}
+        
+        let subStringPass = contentUse[startPassword.lowerBound...]
+        let originSubStringPass = saveOriginText[startPassword.lowerBound...]
+        
+        guard let endPassword = subStringPass.range(of: ";") else {return Wifi.init(name: content, password: "", encryption: "")}
+        
+        let startPasswordReal = subStringPass.index(startPassword.lowerBound, offsetBy: 2)
+        let password = originSubStringPass[startPasswordReal..<endPassword.lowerBound]
+        
+        print("SSID:", SSID)
+        print("Password:", password)
+        return Wifi.init(name: String(SSID), password: String(password), encryption: "WPA2")
+    }
+    
+    func filterLocation(content: String) -> Location{
+        let contentUse = content
+        guard let startLat = contentUse.range(of: "q=") else {
+            return Location.init(yourAddress: content, latitude: "", longitude: "")
+        }
+        guard let endLat = contentUse.range(of: ",") else {
+            return Location.init(yourAddress: content, latitude: "", longitude: "")
+        }
+        let startLatReal = contentUse.index(startLat.lowerBound, offsetBy: 2)
+        let latitude = contentUse[startLatReal..<endLat.lowerBound]
+        
+        let startLongitudeReal = contentUse.index(endLat.lowerBound, offsetBy: 2)
+        let longitude = contentUse[startLongitudeReal...]
+        
+        print("Latitude:", latitude)
+        print("longitude:", longitude)
+        
+        return Location.init(yourAddress: contentUse, latitude: String(latitude), longitude: String(longitude))
+    }
+    
+
+    
     public func scan(originText: String) -> TypeContent {
+        let saveOriginText = originText
         let contentUse = originText.lowercased()
         if(contentUse.prefix(6).contains("tel:")){
             typeContentScan = "Phone Number"
-            
-        }else if(contentUse.prefix(6).contains("wifi")){
+            return .phoneNumber(contentUse)
+        } else if(contentUse.prefix(6).contains("wifi")){
+            //  var stringMap = WIFI:S:Emddi;T:WPA;P:@emddi2018;;
             typeContentScan = "WIFI"
+            return .wifi(filterWifi(content: saveOriginText))
         } else if(contentUse.prefix(6).contains("smsto:")){
             typeContentScan = "SMS"
+            let sms = SMS.init(yourPhone: "0869898203", message: "ahihi do ngok")
+            return .sms(sms)
         } else if(checkTypeContent(for: ConstantManager.RegexValidate.mailRegEx.rawValue, in: contentUse).count>0){
             typeContentScan = "Email"
+            return .email(contentUse)
         } else if(checkTypeContent(for: ConstantManager.RegexValidate.youtubeRegex.rawValue, in: contentUse).count>0){
             typeContentScan = "Youtube"
+            return .youtube(contentUse)
         } else if(checkTypeContent(for: ConstantManager.RegexValidate.facebookRegEx.rawValue, in: contentUse).count>0){
             typeContentScan = "Facebook"
+            return .url(contentUse)
         } else if(contentUse.prefix(40).contains("instagram")){
             typeContentScan = "Instagram"
+            return .instagram(contentUse)
         } else if(contentUse.prefix(40).contains("maps.google.com") || contentUse.prefix(40).contains("www.google.com/maps")){
             typeContentScan = "Google Map"
-            let location = Location.init(yourAddress: "Location", latitude: "21.02375615517149", longitude: "105.8426985435633")
-            return .location(location)
+            //  var stringMap = https://maps.google.com/local?q=21.041591672828975,105.89360720219906
+            return .location(filterLocation(content: contentUse))
         } else if(checkTypeContent(for: ConstantManager.RegexValidate.urlRegEx.rawValue, in: contentUse).count>0){
             typeContentScan = "URL"
             return .text(contentUse)
@@ -184,7 +367,6 @@ class ScanManager {
             typeContentScan = "Text"
             return .text(contentUse)
         }
-        return .text("aString")
     }
     
     func checkTypeContent(for regex: String, in text: String) -> [String] {
@@ -205,7 +387,7 @@ class ScanManager {
         
     }
     
-    func setTypeContentEmail(email: Email){
+    func setTypeContentEmail(email: String){
         self.typeContent = .email(email)
     }
     
@@ -290,7 +472,7 @@ class ScanManager {
     
     
     
-    func displayToastMessage(_ message : String) {
+    func displayToastMessage(_ message : String) -> Void {
         
         let toastView = UILabel()
         toastView.backgroundColor = UIColor.black.withAlphaComponent(0.7)

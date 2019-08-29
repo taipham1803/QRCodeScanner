@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6BAE957DE44805C80118502E /* Pods_QR_Code_Scanner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA0C01369375ED0DFB4E0022 /* Pods_QR_Code_Scanner.framework */; };
+		C703AE9823145C98001A3DB5 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C703AE9723145C98001A3DB5 /* NetworkExtension.framework */; };
 		C72D5E9922E2C888005109E3 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C72D5E9822E2C888005109E3 /* HistoryViewController.swift */; };
 		C77199C522FC0D8800831665 /* ScanManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77199C422FC0D8800831665 /* ScanManager.swift */; };
 		C77199C822FC0DB500831665 /* ScanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77199C722FC0DB500831665 /* ScanModel.swift */; };
@@ -52,6 +53,8 @@
 /* Begin PBXFileReference section */
 		3572174D67B5CFD954F0B010 /* Pods-QR Code Scanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QR Code Scanner.release.xcconfig"; path = "Target Support Files/Pods-QR Code Scanner/Pods-QR Code Scanner.release.xcconfig"; sourceTree = "<group>"; };
 		4023F7BC303BF57C24EAE52D /* Pods-QR Code Scanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QR Code Scanner.debug.xcconfig"; path = "Target Support Files/Pods-QR Code Scanner/Pods-QR Code Scanner.debug.xcconfig"; sourceTree = "<group>"; };
+		C703AE9723145C98001A3DB5 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		C703AE9923145C98001A3DB5 /* QR Code Scanner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "QR Code Scanner.entitlements"; sourceTree = "<group>"; };
 		C72D5E9822E2C888005109E3 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
 		C77199C422FC0D8800831665 /* ScanManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanManager.swift; sourceTree = "<group>"; };
 		C77199C722FC0DB500831665 /* ScanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanModel.swift; sourceTree = "<group>"; };
@@ -102,6 +105,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6BAE957DE44805C80118502E /* Pods_QR_Code_Scanner.framework in Frameworks */,
+				C703AE9823145C98001A3DB5 /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,6 +124,7 @@
 		C3F93D6CE3440F4CF30A89E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C703AE9723145C98001A3DB5 /* NetworkExtension.framework */,
 				EA0C01369375ED0DFB4E0022 /* Pods_QR_Code_Scanner.framework */,
 			);
 			name = Frameworks;
@@ -185,6 +190,7 @@
 		C7A6CCEB22E0145600B9A9DD /* QR Code Scanner */ = {
 			isa = PBXGroup;
 			children = (
+				C703AE9923145C98001A3DB5 /* QR Code Scanner.entitlements */,
 				C7AD111822E16BBC00DB58FD /* Scenes */,
 				C7A6CCEC22E0145600B9A9DD /* AppDelegate.swift */,
 				C7A6CCFB22E0145700B9A9DD /* Info.plist */,
@@ -392,6 +398,14 @@
 				TargetAttributes = {
 					C7A6CCE822E0145600B9A9DD = {
 						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.HotspotConfiguration = {
+								enabled = 1;
+							};
+							com.apple.NetworkExtensions.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -655,6 +669,7 @@
 			baseConfigurationReference = 4023F7BC303BF57C24EAE52D /* Pods-QR Code Scanner.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "QR Code Scanner/QR Code Scanner.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B52J6U3Y4P;
 				INFOPLIST_FILE = "QR Code Scanner/Info.plist";
@@ -674,6 +689,7 @@
 			baseConfigurationReference = 3572174D67B5CFD954F0B010 /* Pods-QR Code Scanner.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "QR Code Scanner/QR Code Scanner.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B52J6U3Y4P;
 				INFOPLIST_FILE = "QR Code Scanner/Info.plist";

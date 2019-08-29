@@ -25,6 +25,7 @@ class GenerateTextViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         textField.delegate = self
+        view.backgroundColor = .white
         setupTypeText()
     }
     

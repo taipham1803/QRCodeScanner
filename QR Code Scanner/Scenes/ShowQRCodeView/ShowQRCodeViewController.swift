@@ -104,6 +104,18 @@ class ShowQRCodeViewController: UIViewController {
             contentToGenerate = url
             lblQRCodeType.text = "QR Code URL"
             
+        case .instagram(_):
+            guard let instagram = ScanManager.shared.contentGenerate else {
+                return
+            }
+            contentToGenerate = instagram
+            lblQRCodeType.text = "Instagram"
+        case .youtube(_):
+            guard let youtube = ScanManager.shared.contentGenerate else {
+                return
+            }
+            contentToGenerate = youtube
+            lblQRCodeType.text = "Youtube Link"
         }
         lblContent.text = "Content of QR Code: " + contentToGenerate
         imgViewQRCode.image = ScanManager.shared.generateQRCode(from: contentToGenerate)

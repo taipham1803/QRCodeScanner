@@ -176,7 +176,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
             
             //        let viewModal = DetectedViewController()
             
-            
             let theHeight = UIScreen.main.bounds.size.height
             let theWidth = UIScreen.main.bounds.size.width
             controller?.view.frame = CGRect(x: 20, y: theHeight - heightSubView - 140 , width: theWidth - 40, height: heightSubView)
@@ -336,7 +335,7 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     private func setupBoundingBox() {
          let yPos = (view.subviews.map { $0.frame.height }).reduce(0, +)
         boundingBox.frame = view.layer.bounds
-        boundingBox.frame =  CGRect(x: 0 , y: yPos, width: self.view.frame.width, height: self.view.frame.height)
+        boundingBox.frame =  CGRect(x: 0 , y: yPos - 270, width: self.view.frame.width, height: self.view.frame.height)
         boundingBox.strokeColor = UIColor.red.cgColor
         boundingBox.lineWidth = 4.0
         boundingBox.fillColor = UIColor.clear.cgColor
@@ -375,14 +374,8 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
 
     }
 
-    func checkContentFromCode(content: String){
-        let contentUse = content.lowercased()
-        
-        ScanManager.shared.setOriginText(originText: contentUse)
-
-        
-//        lblShowContentCode.text = contentUse
-//        lblTypeDetected.text = ScanManager.shared.typeContentScan
+    func saveCode(content: String){
+        ScanManager.shared.setOriginText(originText: content)
     }
     
     func extractPhoneNumber(content: String) -> String {
@@ -392,42 +385,6 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
             return tempphone
         } else {
             return ""
-        }
-    }
-    
-
-    
-    func playInGoogleMap(urlLocation: String){
-//        UIApplication.shared.openURL(URL(string:urlLocation)!)
-        
-        if let urlValidate = URL(string: urlLocation),
-            UIApplication.shared.canOpenURL(urlValidate) {
-            UIApplication.shared.open(urlValidate, options: [:], completionHandler: nil)
-        }
-    }
-    
-    
-    func openFacebook(facebookUrl: String) {
-        guard let url = URL(string: facebookUrl)  else { return }
-        if UIApplication.shared.canOpenURL(url) {
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
-        }
-    }
-    
-    
-    func openInstagram(instagramUrl: String) {
-//        guard let url = URL(string: "https://instagram.com/\(instagramHandle)")  else { return }
-        guard let url = URL(string: instagramUrl)  else { return }
-        if UIApplication.shared.canOpenURL(url) {
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
         }
     }
     
@@ -443,10 +400,10 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
         }
         
         picker.dismiss(animated: true, completion: nil)
-        checkContentFromCode(content: stringContent)
+        saveCode(content: stringContent)
         animateIn()
-        let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: stringContent, type: ScanManager.shared.typeContentScan)
-        ScanManager.shared.saveNewScanResult(scan: newScan)
+//        let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: stringContent, type: ScanManager.shared.typeContentScan)
+//        ScanManager.shared.saveNewScanResult(scan: newScan)
         
 //        picker.dismiss(animated: true) {
 //            self.performSegue(withIdentifier: "segueScanToContent", sender: 1)
@@ -591,11 +548,11 @@ class ScanCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDe
     
     func found(code: String) {
         print(code)
-        checkContentFromCode(content: code)
+        saveCode(content: code)
         stringContent = code
         animateIn()
-        let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: stringContent, type: typeContentDetected)
-        ScanManager.shared.saveNewScanResult(scan: newScan)
+//        let newScan = Scan.init(id: ScanManager.shared.historyScan.count, content: stringContent, type: typeContentDetected)
+//        ScanManager.shared.saveNewScanResult(scan: newScan)
     }
     
     override var prefersStatusBarHidden: Bool {

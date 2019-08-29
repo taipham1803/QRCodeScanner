@@ -26,12 +26,15 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
 //        view.backgroundColor = UIColor(red: 255/255, green: 242/255, blue: 242/255, alpha: 1.0)
+        setupTableView()
+        view.addSubview(tableViewHistory)
+    }
+    
+    func setupTableView(){
         tableViewHistory.delegate = self
         tableViewHistory.dataSource = self
         tableViewHistory.register(UINib.init(nibName: historyCellID, bundle: nil), forCellReuseIdentifier: historyCellID)
         tableViewHistory.backgroundColor = UIColor(white: 1, alpha: 0)
-        view.addSubview(tableViewHistory)
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -41,6 +44,10 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
             print("Check count array history: ", ScanManager.shared.historyScan.count)
             lblNoHistory.text = ""
         }
+//        let theHeight = UIScreen.main.bounds.size.height
+        let theWidth = UIScreen.main.bounds.size.width
+        self.tableViewHistory.tableHeaderView = UIView.init(frame: CGRect(x: 0, y: 0 , width: theWidth, height: 120))
+//        view.bringSubview(toFront: tableViewHistory)
     }
 
     
@@ -61,7 +68,6 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        
         let delete = UITableViewRowAction(style: .default, title: "Delete") { (action, indexPath) in
             // delete item at indexPath
             let item = self.items[indexPath.row]
@@ -80,7 +86,6 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         return [delete,share]
-        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -159,6 +164,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func showActionSheetButtonTapped(index: Int){
+        print("showActionSheetButtonTapped", index)
         let myActionSheet = UIAlertController(title: "Open history", message: "What do you want?", preferredStyle: UIAlertController.Style.actionSheet)
         
         let actionOne = UIAlertAction(title: titleActionOne, style: UIAlertAction.Style.default) { (action) in

@@ -47,6 +47,7 @@ class GenerateCodeViewController: UIViewController, UICollectionViewDelegate, UI
         super.viewDidLoad()
 //        view.backgroundColor = UIColor(red: 255/255, green: 242/255, blue: 242/255, alpha: 1.0)
         setupCollectionView()
+        
     }
     
     func setupCollectionView(){
@@ -54,6 +55,7 @@ class GenerateCodeViewController: UIViewController, UICollectionViewDelegate, UI
         collectionTableGenerate.delegate = self
         collectionTableGenerate.backgroundColor = UIColor(white: 1, alpha: 0)
         collectionTableGenerate.register(UINib.init(nibName: GenerateCollectionViewCell, bundle: nil), forCellWithReuseIdentifier: GenerateCollectionViewCell)
+        collectionTableGenerate.contentInset = UIEdgeInsets(top: 120, left: 0, bottom: 0, right: 0)
     }
     
     
