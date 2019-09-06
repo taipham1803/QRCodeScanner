@@ -14,14 +14,23 @@ class GenerateEventViewController: UIViewController {
     @IBOutlet weak var textFieldLocation: UITextField!
     @IBOutlet weak var textFieldStarttime: UITextField!
     @IBOutlet weak var textFieldEndtime: UITextField!
+    @IBOutlet weak var btnGenerate: UIButton!
     
     @IBAction func btnGenerate(_ sender: Any) {
+        self.performSegue(withIdentifier: "segueEventToQRcode", sender: 1)
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setupButtonGenerate()
+    }
+    
+    func setupButtonGenerate(){
+        btnGenerate.backgroundColor = ScanManager.shared.hexStringToUIColor(hex: "#C7B8F5")
+        btnGenerate.layer.cornerRadius = 14
+        btnGenerate.layer.masksToBounds = true
+        btnGenerate.setTitleColor(ScanManager.shared.hexStringToUIColor(hex: "#ffffff"), for: .normal)
     }
     
 

@@ -13,6 +13,8 @@ class GenerateWifiViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var textFieldWifiName: UITextField!
     @IBOutlet weak var textFieldPassword: UITextField!
     @IBOutlet weak var textFieldEncry: UITextField!
+    @IBOutlet weak var btnGenerate: UIButton!
+    
     var name: String = ""
     var password: String = ""
     var encryption: String = ""
@@ -25,7 +27,14 @@ class GenerateWifiViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDelegate()
-        // Do any additional setup after loading the view.
+        setupButtonGenerate()
+    }
+    
+    func setupButtonGenerate(){
+        btnGenerate.backgroundColor = ScanManager.shared.hexStringToUIColor(hex: "#C7B8F5")
+        btnGenerate.layer.cornerRadius = 14
+        btnGenerate.layer.masksToBounds = true
+        btnGenerate.setTitleColor(ScanManager.shared.hexStringToUIColor(hex: "#ffffff"), for: .normal)
     }
     
     func setupDelegate(){

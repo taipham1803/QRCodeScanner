@@ -12,6 +12,7 @@ class GenerateSMSViewController: UIViewController, UITextViewDelegate, UITextFie
 
     @IBOutlet weak var textFieldPhoneNumber: UITextField!
     @IBOutlet weak var textViewMessage: UITextView!
+    @IBOutlet weak var btnGenerate: UIButton!
     
     var yourPhone: String = ""
     var message: String = ""
@@ -24,6 +25,14 @@ class GenerateSMSViewController: UIViewController, UITextViewDelegate, UITextFie
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDelegate()
+        setupButtonGenerate()
+    }
+    
+    func setupButtonGenerate(){
+        btnGenerate.backgroundColor = ScanManager.shared.hexStringToUIColor(hex: "#C7B8F5")
+        btnGenerate.layer.cornerRadius = 14
+        btnGenerate.layer.masksToBounds = true
+        btnGenerate.setTitleColor(ScanManager.shared.hexStringToUIColor(hex: "#ffffff"), for: .normal)
     }
     
     func setupDelegate(){

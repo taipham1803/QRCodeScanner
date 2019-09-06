@@ -55,9 +55,11 @@ class ScanManager {
         self.originText = ""
         self.detectedObject = ""
         self.typeContent = TypeContent.text("")
+        self.typeContentGen = TypeContentGen.text
     }
     
     var status: Status = .scan
+    fileprivate(set) var typeContentGen: TypeContentGen
     fileprivate(set) var typeContent: TypeContent
     fileprivate(set) var historyScan: [Scan] = []
     fileprivate(set) var contentGenerate: String?
@@ -74,9 +76,24 @@ class ScanManager {
         case history
     }
     
+    enum TypeContentGen {
+        case text
+        case email
+        case contact
+        case location
+        case event
+        case sms
+        case wifi
+        case phoneNumber
+        case website
+        case url
+        case instagram
+        case youtube
+    }
+    
     enum TypeContent {
         case text(String)
-        case email(String)
+        case email(Email)
         case contact(Contact)
         case location(Location)
         case event(Event)
@@ -94,7 +111,7 @@ class ScanManager {
             case .text(let str):
                 return [.copy(str), .safari(str), .chrome(str), .share(str)]
             case .email(let email):
-                return [.copy(email), .safari(email), .openMail(email), .share(email)]
+                return [.copy(email.message), .safari(email.message), .openMail(email.message), .share(email.message)]
             case .contact(let contact):
 //                let sms = SMS.init(yourPhone: contact.phoneNumber, message: contact.note)
                 return [.copy(contact.phoneNumber), .message(contact.phoneNumber), .callPhone(contact.phoneNumber), .share(contact.phoneNumber)]
@@ -194,10 +211,16 @@ class ScanManager {
             case .youtube(let str):
                 guard let url = URL(string: str) else { return }
                 UIApplication.shared.open(url)
-            case .facebook(let str):
+            case .facebook(let PROFILE_ID2):
+                let PROFILE_ID = "taipham1803"
+                if UIApplication.shared.canOpenURL(URL(string: "fb://profile/" + PROFILE_ID)!) {
+                    UIApplication.shared.open(URL(string: "fb://profile/PROFILE_ID")!, options: [:])
+                } else {
+                    UIApplication.shared.open(URL(string: "https://facebook.com/" + PROFILE_ID)!, options: [:])
+                }
                 
-                guard let url = URL(string: str) else { return }
-                UIApplication.shared.open(url)
+//                guard let url = URL(string: str) else { return }
+//                UIApplication.shared.open(url)
             case .openWifi(let wifi):
                 print("Connecting to Wifi name: ",wifi.name, wifi.password )
                 let configuration = NEHotspotConfiguration.init(ssid: wifi.name, passphrase: wifi.password, isWEP: false)
@@ -346,7 +369,8 @@ class ScanManager {
             return .sms(sms)
         } else if(checkTypeContent(for: ConstantManager.RegexValidate.mailRegEx.rawValue, in: contentUse).count>0){
             typeContentScan = "Email"
-            return .email(contentUse)
+            let email = Email.init(yourEmail: "", subject: "", message: contentUse)
+            return .email(email)
         } else if(checkTypeContent(for: ConstantManager.RegexValidate.youtubeRegex.rawValue, in: contentUse).count>0){
             typeContentScan = "Youtube"
             return .youtube(contentUse)
@@ -382,45 +406,44 @@ class ScanManager {
         }
     }
     
-    func setTypeContentText(string: String){
-        self.typeContent = .text(string)
-        
+    func setTypeContentText(){
+        self.typeContentGen = .text
     }
     
-    func setTypeContentEmail(email: String){
-        self.typeContent = .email(email)
+    func setTypeContentEmail(){
+        self.typeContentGen = .email
     }
     
-    func setTypeContentContact(contact: Contact){
-        self.typeContent = .contact(contact)
+    func setTypeContentContact(){
+        self.typeContentGen = .contact
     }
     
-    func setTypeContentLocation(location: Location){
-        self.typeContent = .location(location)
+    func setTypeContentLocation(){
+        self.typeContentGen = .location
     }
     
-    func setTypeContentEvent(event: Event){
-        self.typeContent = .event(event)
+    func setTypeContentEvent(){
+        self.typeContentGen = .event
     }
     
-    func setTypeContentSMS(sms: SMS){
-        self.typeContent = .sms(sms)
+    func setTypeContentSMS(){
+        self.typeContentGen = .sms
     }
     
-    func setTypeContentWifi(wifi: Wifi){
-        self.typeContent = .wifi(wifi)
+    func setTypeContentWifi(){
+        self.typeContentGen = .wifi
     }
     
-    func setTypeContentPhoneNumber(string: String){
-        self.typeContent = .phoneNumber(string)
+    func setTypeContentPhoneNumber(){
+        self.typeContentGen = .phoneNumber
     }
     
-    func setTypeContentWebsite(string: String){
-        self.typeContent = .website(string)
+    func setTypeContentWebsite(){
+        self.typeContentGen = .website
     }
     
-    func setTypeContentUrl(string: String){
-        self.typeContent = .url(string)
+    func setTypeContentUrl(){
+        self.typeContentGen = .url
     }
     
     func setContentGenerate(content: String){
@@ -552,6 +575,28 @@ class ScanManager {
         let cgImage:CGImage = context.createCGImage(cmage, from: cmage.extent)!
         let image:UIImage = UIImage.init(cgImage: cgImage)
         return image
+    }
+    
+    func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        
+        if (cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
+        }
+        
+        if ((cString.count) != 6) {
+            return UIColor.gray
+        }
+        
+        var rgbValue:UInt64 = 0
+        Scanner(string: cString).scanHexInt64(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
     }
     
 //    func showAlert(content: String, title1: String, title2: String){

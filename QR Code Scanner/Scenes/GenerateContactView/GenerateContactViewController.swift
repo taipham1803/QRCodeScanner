@@ -21,6 +21,7 @@ class GenerateContactViewController: UIViewController, UITextFieldDelegate, UITe
     var phoneNumber: String = ""
     var note: String = ""
     
+    @IBOutlet weak var btnGenerate: UIButton!
     @IBAction func btnGenerate(_ sender: Any) {
         saveContact()
         self.performSegue(withIdentifier: "segueContactToQRcode", sender: 1)
@@ -29,6 +30,14 @@ class GenerateContactViewController: UIViewController, UITextFieldDelegate, UITe
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDelegate()
+        setupButtonGenerate()
+    }
+    
+    func setupButtonGenerate(){
+        btnGenerate.backgroundColor = ScanManager.shared.hexStringToUIColor(hex: "#C7B8F5")
+        btnGenerate.layer.cornerRadius = 14
+        btnGenerate.layer.masksToBounds = true
+        btnGenerate.setTitleColor(ScanManager.shared.hexStringToUIColor(hex: "#ffffff"), for: .normal)
     }
 
     func setupDelegate(){

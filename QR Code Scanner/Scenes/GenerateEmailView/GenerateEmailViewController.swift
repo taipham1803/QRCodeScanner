@@ -12,6 +12,8 @@ class GenerateEmailViewController: UIViewController, UITextFieldDelegate, UIText
     @IBOutlet weak var textFieldYourEmail: UITextField!
     @IBOutlet weak var textFieldSubject: UITextField!
     @IBOutlet weak var textViewContent: UITextView!
+    @IBOutlet weak var btnGenerate: UIButton!
+    
     var yourEmail: String = ""
     var subject: String = ""
     var message: String = ""
@@ -24,6 +26,14 @@ class GenerateEmailViewController: UIViewController, UITextFieldDelegate, UIText
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDelegate()
+        setupButtonGenerate()
+    }
+    
+    func setupButtonGenerate(){
+        btnGenerate.backgroundColor = ScanManager.shared.hexStringToUIColor(hex: "#C7B8F5")
+        btnGenerate.layer.cornerRadius = 14
+        btnGenerate.layer.masksToBounds = true
+        btnGenerate.setTitleColor(ScanManager.shared.hexStringToUIColor(hex: "#ffffff"), for: .normal)
     }
     
     func setupDelegate(){

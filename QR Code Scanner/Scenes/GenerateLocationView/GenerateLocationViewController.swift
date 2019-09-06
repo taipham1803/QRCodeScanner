@@ -14,6 +14,7 @@ class GenerateLocationViewController: UIViewController, CLLocationManagerDelegat
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var textFieldSearch: UITextField!
+    @IBOutlet weak var btnGenerate: UIButton!
     
     let locationManager = CLLocationManager()
     
@@ -24,8 +25,15 @@ class GenerateLocationViewController: UIViewController, CLLocationManagerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLocationManager()
-
+        setupButtonGenerate()
         // Do any additional setup after loading the view.
+    }
+    
+    func setupButtonGenerate(){
+        btnGenerate.backgroundColor = ScanManager.shared.hexStringToUIColor(hex: "#C7B8F5")
+        btnGenerate.layer.cornerRadius = 14
+        btnGenerate.layer.masksToBounds = true
+        btnGenerate.setTitleColor(ScanManager.shared.hexStringToUIColor(hex: "#ffffff"), for: .normal)
     }
     
     func setupLocationManager(){

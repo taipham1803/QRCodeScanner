@@ -20,13 +20,13 @@
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="is4-v8-FHH">
-                        <rect key="frame" x="6" y="6" width="139" height="189"/>
+                        <rect key="frame" x="12" y="6" width="127" height="189"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YEj-FR-SV2">
-                                <rect key="frame" x="12" y="12" width="115" height="121"/>
+                                <rect key="frame" x="12" y="12" width="103" height="121"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cell name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hrj-ll-G3n">
-                                <rect key="frame" x="12" y="157" width="115" height="20"/>
+                                <rect key="frame" x="12" y="157" width="103" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="0B8-ju-Yh9"/>
                                 </constraints>
@@ -49,9 +49,9 @@
                 </subviews>
             </view>
             <constraints>
-                <constraint firstItem="is4-v8-FHH" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="6" id="ioQ-FR-Fzs"/>
+                <constraint firstItem="is4-v8-FHH" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="12" id="ioQ-FR-Fzs"/>
                 <constraint firstItem="is4-v8-FHH" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="6" id="mIE-Ve-xr4"/>
-                <constraint firstAttribute="trailing" secondItem="is4-v8-FHH" secondAttribute="trailing" constant="6" id="sKu-xH-yGS"/>
+                <constraint firstAttribute="trailing" secondItem="is4-v8-FHH" secondAttribute="trailing" constant="12" id="sKu-xH-yGS"/>
                 <constraint firstAttribute="bottom" secondItem="is4-v8-FHH" secondAttribute="bottom" constant="6" id="twk-BC-fwf"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>

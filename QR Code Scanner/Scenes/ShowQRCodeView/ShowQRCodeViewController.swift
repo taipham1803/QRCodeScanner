@@ -20,6 +20,8 @@ class ShowQRCodeViewController: UIViewController {
     @IBOutlet weak var imgViewQRCode: UIImageView!
     @IBOutlet weak var lblQRCodeType: UILabel!
     @IBOutlet weak var lblContent: UILabel!
+    @IBOutlet weak var btnSave: UIButton!
+    @IBOutlet weak var btnShare: UIButton!
     
     @IBOutlet weak var imgCheckQR: UIImageView!
     
@@ -42,7 +44,20 @@ class ShowQRCodeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         generateQRCode()
+        setupButtonSaveShare()
     }
+    
+    func setupButtonSaveShare(){
+        btnSave.backgroundColor = ScanManager.shared.hexStringToUIColor(hex: "#C7B8F5")
+        btnSave.layer.cornerRadius = 14
+        btnSave.layer.masksToBounds = true
+        btnSave.setTitleColor(ScanManager.shared.hexStringToUIColor(hex: "#ffffff"), for: .normal)
+        btnShare.backgroundColor = ScanManager.shared.hexStringToUIColor(hex: "#C7B8F5")
+        btnShare.layer.cornerRadius = 14
+        btnShare.layer.masksToBounds = true
+        btnShare.setTitleColor(ScanManager.shared.hexStringToUIColor(hex: "#ffffff"), for: .normal)
+    }
+    
     
     func generateQRCode(){
         switch ScanManager.shared.typeContent {
