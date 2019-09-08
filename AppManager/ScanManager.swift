@@ -185,7 +185,7 @@ class ScanManager {
             switch self {
             case .copy(let str):
                 let pasteboard = UIPasteboard.general
-//                displayToastMessage("Copied to clipboard")
+                ScanManager.shared.displayToastMessage("Copied to clipboard")
                 pasteboard.string = str
                 break
             case .share(let string):
@@ -492,8 +492,6 @@ class ScanManager {
             print("Failed saving")
         }
     }
-    
-    
     
     func displayToastMessage(_ message : String) -> Void {
         

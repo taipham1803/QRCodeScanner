@@ -132,7 +132,7 @@ class ShowQRCodeViewController: UIViewController {
             contentToGenerate = youtube
             lblQRCodeType.text = "Youtube Link"
         }
-        lblContent.text = "Content of QR Code: " + contentToGenerate
+        lblContent.text = contentToGenerate
         imgViewQRCode.image = ScanManager.shared.generateQRCode(from: contentToGenerate)
         imgQR = ScanManager.shared.generateQRCode(from: contentToGenerate)!
     }
